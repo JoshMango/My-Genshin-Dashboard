@@ -1359,56 +1359,45 @@ a:not(.brand):not(.character-link):not(.button) {
 .good-guide a {
   text-decoration: underline;
 }
-.good-import-tip {
+html:has(.roster-welcome[open]) {
+  overflow: hidden;
+}
+.roster-welcome {
   position: fixed;
-  z-index: 2;
-  inset: auto max(1rem, env(safe-area-inset-right))
-    max(1rem, env(safe-area-inset-bottom)) auto;
-  width: min(25rem, calc(100% - 2rem));
-  padding: 1rem;
-  text-align: start;
+  inset: 0;
+  margin: auto;
+  width: min(38rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: clamp(1.45rem, 5vw, 3rem);
+  color: var(--ink);
+  text-align: center;
   border-color: var(--accent);
-  background: linear-gradient(
-    150deg,
-    color-mix(in srgb, var(--control-accent) 15%, var(--panel)),
-    var(--panel-deep) 65%
-  );
-  box-shadow: 0 0.5rem 2rem #05091585;
+  background:
+    radial-gradient(
+      ellipse at top,
+      color-mix(in srgb, var(--control-accent) 24%, transparent),
+      transparent 72%
+    ),
+    var(--panel-deep);
+  box-shadow: 0 0.75rem 3rem #050915a0;
 }
-.good-tip-copy {
-  display: flex;
-  gap: 0.7rem;
-  align-items: start;
+.roster-welcome::backdrop {
+  background: #050915a8;
+  backdrop-filter: blur(2px);
 }
-.good-tip-copy > .action-icon {
-  width: 2rem;
-  height: 2rem;
-  padding: 0.35rem;
-  color: var(--accent);
-  background: var(--panel-deep);
-  border-radius: 0.55rem;
+.roster-welcome h2 {
+  font-size: clamp(1.75rem, 4.2vw, 2.5rem);
 }
-.good-tip-copy h2 {
-  margin: 0.1rem 0 0;
-  font-size: 1.15rem;
+.roster-welcome p {
+  max-width: 43ch;
+  margin: 0.75rem auto;
 }
-.good-tip-copy p {
-  margin: 0.4rem 0 0.75rem;
-  color: var(--muted);
-  font-size: 0.91rem;
-  line-height: 1.4;
-}
-.roster-home .good-import-tip .input-row {
-  justify-content: flex-start;
-}
-@media (max-width: 42rem) {
-  .good-import-tip {
-    top: calc(4.65rem + env(safe-area-inset-top));
-    bottom: auto;
-  }
+.roster-welcome .input-row {
+  margin-top: 1.45rem;
 }
 @media (prefers-reduced-motion: no-preference) {
-  :root[data-motion="on"] .good-import-tip {
+  :root[data-motion="on"] .roster-welcome[open] {
     animation: profile-links-appear 250ms ease-out;
   }
 }

@@ -11,7 +11,7 @@ import { ActionIcon } from "./action-icon";
 import { CharacterCard } from "./character-card";
 import { useDashboard } from "./dashboard-state";
 import { GameIcon } from "./game-icon";
-import { GoodImportTip } from "./good-import-tip";
+import { RosterWelcome } from "./roster-welcome";
 import { InventoryImport } from "./inventory-import";
 import { ManualBuild } from "./manual-build";
 
@@ -29,6 +29,7 @@ export function ProfileScreen() {
   const [failure, setFailure] = useState("");
   const [tab, setTab] = useState(0);
   const goodTab = useRef<HTMLButtonElement>(null);
+  const rosterTitle = useRef<HTMLHeadingElement>(null);
   const [element, setElement] = useState("");
   const [rarity, setRarity] = useState("");
   const [source, setSource] = useState("");
@@ -120,7 +121,9 @@ export function ProfileScreen() {
         <span className="roster-emblem" aria-hidden="true">
           ✦
         </span>
-        <h1>Character roster</h1>
+        <h1 ref={rosterTitle} tabIndex={-1}>
+          Character roster
+        </h1>
         {profile ? (
           <div className="player-card">
             {profile.namecard && (
@@ -358,7 +361,10 @@ export function ProfileScreen() {
         </label>
         <p role="status">{backupNotice}</p>
       </details>
-      <GoodImportTip openGuide={openGoodGuide} />
+      <RosterWelcome
+        openGuide={openGoodGuide}
+        onDismiss={() => rosterTitle.current?.focus()}
+      />
     </div>
   );
 }

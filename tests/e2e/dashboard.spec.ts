@@ -146,10 +146,13 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await page.goto("/");
   const links = page.getByRole("navigation", { name: "Profile links" });
   await expect(links).toHaveCount(0);
-  const goodTip = page.getByRole("complementary", { name: "GOOD import tip" });
-  await expect(goodTip).toBeVisible();
-  await goodTip.getByRole("button", { name: "Open GOOD import" }).click();
-  await expect(goodTip).toHaveCount(0);
+  const welcome = page.getByRole("dialog", {
+    name: "Welcome to My Genshin Dashboard",
+  });
+  await expect(welcome).toBeVisible();
+  await expect(welcome.getByRole("button", { name: "Got it" })).toBeFocused();
+  await welcome.getByRole("button", { name: "Upload GOOD file" }).click();
+  await expect(welcome).toBeHidden();
   await expect(
     page.getByRole("heading", { name: "What is a GOOD file?" }),
   ).toBeVisible();
@@ -315,10 +318,15 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect.poll(ripple).toBe("none");
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.keyboard.press("Tab");
+  await page.keyboard.press("Escape");
   await expect(
-    page.getByRole("link", { name: "Skip to content" }),
+    page.getByRole("dialog", { name: "Welcome to My Genshin Dashboard" }),
+  ).toBeHidden();
+  await expect(
+    page.getByRole("heading", { name: "Character roster" }),
   ).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Enka UID" })).toBeFocused();
   await page.getByLabel("Genshin UID").fill("618285856");
   await page.getByRole("button", { name: "Search Account" }).click();
   await expect(page.getByText("No public showcase builds")).toBeVisible();
@@ -391,6 +399,7 @@ test("opens, remembers, and removes a character's local 3D model", async ({
     }),
   );
   await page.goto("/");
+  await page.getByRole("button", { name: "Got it" }).click();
   await page.getByLabel("Genshin UID").fill("618285856");
   await page.getByRole("button", { name: "Search Account" }).click();
   await page.getByRole("button", { name: /Kamisato Ayaka/ }).waitFor();
@@ -511,12 +520,14 @@ test("discovers a Hyperbloom team from the owned roster and sends it to Compare"
     }),
   );
   await page.goto("/");
+  await page.getByRole("button", { name: "Got it" }).click();
   await page.getByLabel("Genshin UID").fill("618285856");
   await page.getByRole("button", { name: "Search Account" }).click();
   await expect(
     page.getByRole("link", { name: "Leaderboards on Akasha.cv" }),
   ).toHaveAttribute("href", "https://akasha.cv/profile/618285856");
   await page.reload();
+  await page.getByRole("button", { name: "Got it" }).click();
   await expect(
     page.getByRole("button", { name: /Nahida.*Showcase/ }),
   ).toBeVisible();
