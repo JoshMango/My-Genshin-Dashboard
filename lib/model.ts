@@ -47,6 +47,7 @@ export type Weapon = {
 };
 export type Artifact = {
   id: string;
+  name?: string;
   setId?: string;
   setName: string;
   icon?: string;

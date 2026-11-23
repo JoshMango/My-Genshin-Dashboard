@@ -1,7 +1,9 @@
 type EnkaStat = {
   mainPropId?: string;
   appendPropId?: string;
-  propValue: number;
+  appendPropID?: string;
+  statValue?: number;
+  propValue?: number;
 };
 export type EnkaEquipment = {
   itemId: number;
@@ -14,6 +16,7 @@ export type EnkaEquipment = {
   flat?: {
     nameTextMapHash?: string;
     setNameTextMapHash?: string;
+    setId?: number;
     rankLevel?: number;
     equipType?: string;
     icon?: string;

@@ -1,4 +1,5 @@
 import data from "@/data/build-profiles.json";
+import guides from "@/data/guide-artifacts.json";
 import archetypeData from "@/data/archetypes.json";
 import type { Artifact, Character, Slot, StatKey, Stats } from "@/lib/model";
 import { characterRoles, type Role, type Team } from "@/lib/teams";
@@ -16,8 +17,22 @@ type Profile = {
 };
 type ProfileName = Role | "trigger";
 type Override = Partial<Profile> & { profile: ProfileName };
+type Guide = Partial<Omit<Override, "sets">> & {
+  guide?: string;
+  sets: [name: string, context: string][];
+};
 const profiles = data.profiles as Record<ProfileName, Profile>;
 const overrides = data.characters as Record<string, Override>;
+const guideProfiles = guides as unknown as Record<string, Guide>;
+const bloomTriggerGuides: Record<
+  string,
+  { reaction: Team["goal"]["reaction"]; guide: string }
+> = {
+  "Kuki Shinobu": { reaction: "Hyperbloom", guide: "shinobu-quickguide" },
+  "Raiden Shogun": { reaction: "Hyperbloom", guide: "raiden-quickguide" },
+  Thoma: { reaction: "Burgeon", guide: "thoma-quickguide" },
+  Xiangling: { reaction: "Burgeon", guide: "xiangling-quickguide" },
+};
 const triggerReactions = [
   "Bloom",
   "Hyperbloom",
@@ -44,6 +59,8 @@ export type BuildProfile = Omit<Profile, "sands" | "goblet" | "circlet"> & {
   role: ProfileName;
   main: Record<Slot, StatKey[]>;
   priority: StatKey[];
+  guideUrl?: string;
+  setNotes?: Record<string, string>;
 };
 
 export function recommendBuild(character: Character, team: Team): BuildProfile {
@@ -53,7 +70,14 @@ export function recommendBuild(character: Character, team: Team): BuildProfile {
     ? overrides[character.name]
     : undefined;
   const role = characterRoles(character);
+  const guide = Object.hasOwn(guideProfiles, character.name)
+    ? guideProfiles[character.name]
+    : undefined;
+  const triggerGuide = Object.hasOwn(bloomTriggerGuides, character.name)
+    ? bloomTriggerGuides[character.name]
+    : undefined;
   const isTrigger =
+    (!guide || triggerGuide?.reaction === goal.reaction) &&
     goal.archetype === "Reaction team" &&
     triggerReactions.includes(goal.reaction) &&
     !!character.element &&
@@ -63,9 +87,12 @@ export function recommendBuild(character: Character, team: Team): BuildProfile {
       role.includes("carry"));
   const chosen: ProfileName = isTrigger
     ? "trigger"
-    : (known?.profile ?? role[0] ?? "carry");
-  const profile =
-    isTrigger || !known ? profiles[chosen] : { ...profiles[chosen], ...known };
+    : (guide?.profile ?? known?.profile ?? role[0] ?? "carry");
+  const profile = {
+    ...profiles[chosen],
+    ...(isTrigger ? undefined : known),
+    ...(isTrigger ? undefined : guide),
+  };
   const hasBattery = team.slots.some(
     (member) =>
       member &&
@@ -100,17 +127,48 @@ export function recommendBuild(character: Character, team: Team): BuildProfile {
       ? ["Viridescent Venerer"]
       : isTrigger && !["Bloom", "Hyperbloom", "Burgeon"].includes(goal.reaction)
         ? ["Gilded Dreams", "Thundering Fury", "Wanderer's Troupe"]
-        : profile.sets;
+        : isTrigger
+          ? triggerGuide?.reaction === goal.reaction
+            ? ["Flower of Paradise Lost", "Gilded Dreams"]
+            : profiles[chosen].sets
+          : (guide?.sets.map(([name]) => name) ??
+            known?.sets ??
+            profiles[chosen].sets);
+  const activeGuide =
+    isTrigger && triggerGuide?.reaction === goal.reaction
+      ? triggerGuide.guide
+      : !isTrigger && guide
+        ? (guide.guide ?? character.name.toLowerCase() + "-quickguide")
+        : undefined;
+  const sands =
+    character.name === "Mavuika" &&
+    (goal.archetype === "Hypercarry" ||
+      !["Vaporize", "Melt"].includes(goal.reaction))
+      ? ["atk_" as const]
+      : profile.sands;
   return {
     ...profile,
     sets,
+    guideUrl: activeGuide
+      ? `https://keqingmains.com/q/${activeGuide}/`
+      : undefined,
+    setNotes:
+      !isTrigger && guide
+        ? Object.fromEntries(guide.sets)
+        : activeGuide
+          ? {
+              "Flower of Paradise Lost": "Dedicated reaction damage option.",
+              "Gilded Dreams":
+                "Alternative if you already have a strong Elemental Mastery set.",
+            }
+          : undefined,
     role: chosen,
     er,
     weights,
     main: {
       Flower: ["hp"],
       Plume: ["atk"],
-      Sands: mainStats(profile.sands),
+      Sands: mainStats(sands),
       Goblet: mainStats(profile.goblet),
       Circlet: mainStats(profile.circlet),
     },

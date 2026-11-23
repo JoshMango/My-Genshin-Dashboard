@@ -1,20 +1,33 @@
-import type { Character } from "@/lib/model";
+import type { Character, Slot } from "@/lib/model";
 
 const base =
   "https://raw.githubusercontent.com/theBowja/genshin-db/8e5badd60b5d894284ccc927a56c9683529d2592/src/data/English";
 type Text = { name?: string; description?: string };
 type Talents = { combat1?: Text; combat2?: Text; combat3?: Text };
+type Refinement = { description?: string; values?: string[] } | string[];
 type WeaponText = {
   id?: number;
   effectName?: string;
   effectTemplateRaw?: string;
-  r1?: string[];
-  r2?: string[];
-  r3?: string[];
-  r4?: string[];
-  r5?: string[];
+  r1?: Refinement;
+  r2?: Refinement;
+  r3?: Refinement;
+  r4?: Refinement;
+  r5?: Refinement;
 };
-type SetText = { effect2Pc?: string; effect4Pc?: string };
+export const artifactPieceFields: Record<
+  Slot,
+  "flower" | "plume" | "sands" | "goblet" | "circlet"
+> = {
+  Flower: "flower",
+  Plume: "plume",
+  Sands: "sands",
+  Goblet: "goblet",
+  Circlet: "circlet",
+};
+type SetText = { effect2Pc?: string; effect4Pc?: string } & Partial<
+  Record<(typeof artifactPieceFields)[Slot], Text>
+>;
 
 const pending = new Map<string, Promise<unknown>>();
 
@@ -66,7 +79,16 @@ export async function loadDescriptions(character: Character) {
     ),
   ]);
   const rank = character.weapon?.refinement ?? 1;
-  const values = weapon?.[`r${rank}` as "r1"] ?? [];
+  const refinement = weapon?.[`r${rank}` as "r1"];
+  const values = Array.isArray(refinement)
+    ? refinement
+    : (refinement?.values ?? []);
+  const effect =
+    (!Array.isArray(refinement) && refinement?.description) ||
+    weapon?.effectTemplateRaw?.replace(
+      /\{(\d+)\}/g,
+      (token, index: string) => values[Number(index)] ?? token,
+    );
   return {
     talents: [talent?.combat1, talent?.combat2, talent?.combat3],
     constellations: Array.from(
@@ -74,13 +96,7 @@ export async function loadDescriptions(character: Character) {
       (_, index) => constellation?.[`c${index + 1}`],
     ),
     weaponName: weapon?.effectName,
-    weaponText: weapon?.effectTemplateRaw
-      ?.replace(
-        /\{(\d+)\}/g,
-        (token, index: string) => values[Number(index)] ?? token,
-      )
-      .replace(/<[^>]+>/g, "")
-      .replace(/\\n/g, "\n"),
+    weaponText: effect?.replace(/<[^>]+>/g, "").replace(/\\n/g, "\n"),
     sets: Object.fromEntries(setInfo),
   };
 }

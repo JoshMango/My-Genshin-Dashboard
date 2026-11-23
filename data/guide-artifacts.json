@@ -1,0 +1,472 @@
+{
+  "Furina": {
+    "sets": [
+      ["Golden Troupe", "Best for her off-field damage."],
+      [
+        "Tenacity of the Millelith",
+        "Team ATK support when her personal damage is secondary."
+      ],
+      ["Silken Moon's Serenade", "Team support with Nod-Krai teammates."]
+    ],
+    "sands": ["hp_", "enerRech_"],
+    "goblet": ["hp_", "hydro_dmg_"]
+  },
+  "Mavuika": {
+    "sets": [
+      ["Obsidian Codex", "First choice for on-field damage."],
+      [
+        "Scroll of the Hero of Cinder City",
+        "Off-field team support when nobody else holds Scroll."
+      ],
+      ["Marechaussee Hunter", "On-field alternative with Furina."],
+      ["Gilded Dreams", "Interim set for Vaporize or Melt."]
+    ],
+    "profile": "carry",
+    "sands": ["atk_", "eleMas"],
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "atk_": 0.8,
+      "eleMas": 0.55
+    },
+    "er": []
+  },
+  "Arlecchino": {
+    "sets": [
+      [
+        "Fragment of Harmonic Whimsy",
+        "First choice for her Bond of Life damage."
+      ],
+      ["Gladiator's Finale", "Alternative if you already have strong pieces."],
+      [
+        "Night of the Sky's Unveiling",
+        "An alternative in Ascendant Gleam teams."
+      ]
+    ]
+  },
+  "Neuvillette": {
+    "sets": [
+      ["Marechaussee Hunter", "First choice for his Charged Attack playstyle."],
+      ["Heart of Depth", "Interim set while farming Marechaussee Hunter."]
+    ]
+  },
+  "Skirk": {
+    "sets": [
+      [
+        "Finale of the Deep Galleries",
+        "Dedicated set for her Normal Attack and Burst builds."
+      ],
+      ["Marechaussee Hunter", "Alternative when Furina provides HP changes."]
+    ],
+    "profile": "carry",
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "atk_": 0.8
+    },
+    "er": []
+  },
+  "Escoffier": {
+    "sets": [
+      ["Golden Troupe", "For her personal off-field Skill damage."],
+      [
+        "Tenacity of the Millelith",
+        "Team ATK support, especially when her own damage is secondary."
+      ],
+      ["Noblesse Oblige", "Team ATK support when she can Burst on rotation."]
+    ],
+    "profile": "offField",
+    "sands": ["atk_", "enerRech_"],
+    "goblet": ["cryo_dmg_", "atk_"]
+  },
+  "Ineffa": {
+    "sets": [
+      [
+        "Aubade of Morningstar and Moon",
+        "Lunar-Charged damage option with other Moonsign characters."
+      ],
+      ["Tenacity of the Millelith", "Team ATK support option."]
+    ],
+    "profile": "offField",
+    "sands": ["atk_", "eleMas", "enerRech_"],
+    "goblet": ["atk_", "eleMas"],
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "atk_": 0.85,
+      "eleMas": 0.8,
+      "enerRech_": 0.5
+    }
+  },
+  "Lauma": {
+    "sets": [
+      ["Silken Moon's Serenade", "Team EM and Lunar Reaction support."],
+      ["Deepwood Memories", "Use when the team needs a Deepwood holder."]
+    ],
+    "profile": "enabler",
+    "sands": ["eleMas", "enerRech_"],
+    "goblet": ["eleMas"],
+    "circlet": ["eleMas"]
+  },
+  "Flins": {
+    "sets": [
+      ["Night of the Sky's Unveiling", "First choice in Ascendant Gleam."],
+      ["Gilded Dreams", "Temporary alternative while farming."]
+    ],
+    "profile": "carry",
+    "sands": ["atk_", "eleMas", "enerRech_"],
+    "goblet": ["atk_", "eleMas"],
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "atk_": 0.85,
+      "eleMas": 0.85,
+      "enerRech_": 0.75
+    }
+  },
+  "Nefer": {
+    "sets": [
+      ["Night of the Sky's Unveiling", "First choice for Lunar-Bloom damage."],
+      ["Gilded Dreams", "Temporary EM set while farming."]
+    ],
+    "profile": "carry",
+    "sands": ["eleMas"],
+    "goblet": ["eleMas"],
+    "circlet": ["critRate_", "critDMG_", "eleMas"],
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "eleMas": 0.95,
+      "enerRech_": 0.35
+    }
+  },
+  "Columbina": {
+    "sets": [
+      [
+        "Aubade of Morningstar and Moon",
+        "Off-field personal damage in Ascendant Gleam."
+      ],
+      ["Night of the Sky's Unveiling", "On-field play or frequent swaps."],
+      ["Silken Moon's Serenade", "Team buffing if teammates use other sets."]
+    ],
+    "profile": "offField",
+    "sands": ["hp_", "enerRech_"],
+    "goblet": ["hp_"],
+    "weights": {
+      "hp_": 0.95,
+      "critRate_": 1,
+      "critDMG_": 1,
+      "enerRech_": 0.8,
+      "eleMas": 0.6
+    }
+  },
+  "Varka": {
+    "sets": [
+      [
+        "A Day Carved From Rising Winds",
+        "First choice for his on-field damage."
+      ]
+    ],
+    "profile": "carry"
+  },
+  "Lohen": {
+    "sets": [
+      [
+        "A Day Carved From Rising Winds",
+        "First choice across most of his teams."
+      ],
+      [
+        "Shimenawa's Reminiscence",
+        "Use an existing set as an interim option outside Freeze."
+      ]
+    ],
+    "profile": "carry"
+  },
+  "Nicole": {
+    "sets": [
+      ["Celestial Gift", "Default team buff set."],
+      [
+        "Scroll of the Hero of Cinder City",
+        "Alternative if the team benefits more from its DMG Bonus."
+      ],
+      ["Noblesse Oblige", "Alternative for ATK-focused teams."]
+    ],
+    "profile": "buffer",
+    "sands": ["atk_", "enerRech_"],
+    "goblet": ["atk_"],
+    "circlet": ["atk_"],
+    "weights": {
+      "atk_": 1,
+      "enerRech_": 0.8,
+      "atk": 0.35
+    }
+  },
+  "Sandrone": {
+    "sets": [
+      [
+        "Disenchantment in Deep Shadow",
+        "First choice for on-field Stellar-Conduct."
+      ],
+      ["Gilded Dreams", "ATK and EM alternative while farming."]
+    ],
+    "profile": "carry",
+    "sands": ["atk_", "eleMas"],
+    "goblet": ["atk_", "eleMas"],
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "atk_": 0.85,
+      "eleMas": 0.8,
+      "enerRech_": 0.45
+    }
+  },
+  "Vodyanitsa": {
+    "sets": [
+      ["Tenacity of the Millelith", "Support set for ATK-scaling teammates."]
+    ],
+    "profile": "buffer",
+    "sands": ["hp_", "enerRech_"],
+    "goblet": ["hp_"],
+    "circlet": ["hp_"],
+    "weights": {
+      "hp_": 1,
+      "enerRech_": 0.75,
+      "critRate_": 0.45,
+      "hp": 0.35
+    }
+  },
+  "Linnea": {
+    "sets": [
+      ["Husk of Opulent Dreams", "General DEF-based option."],
+      ["Silken Moon's Serenade", "Team buff option if the team needs a holder."]
+    ],
+    "profile": "buffer",
+    "sands": ["def_", "enerRech_"],
+    "goblet": ["def_"],
+    "circlet": ["def_", "critRate_", "critDMG_"],
+    "weights": {
+      "def_": 1,
+      "critRate_": 0.85,
+      "critDMG_": 0.85,
+      "enerRech_": 0.65,
+      "eleMas": 0.45
+    }
+  },
+  "Zibai": {
+    "sets": [
+      ["Night of the Sky's Unveiling", "First choice with Ascendant Gleam."],
+      ["Husk of Opulent Dreams", "Temporary DEF option."]
+    ],
+    "guide": "zibai-quickguide-2",
+    "profile": "carry",
+    "sands": ["def_"],
+    "goblet": ["def_", "eleMas"],
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "def_": 0.9,
+      "eleMas": 0.75,
+      "enerRech_": 0.55
+    }
+  },
+  "Varesa": {
+    "sets": [
+      ["Long Night's Oath", "First choice for Plunging Attack damage."],
+      [
+        "Obsidian Codex",
+        "Strong alternative for damage within Nightsoul uptime."
+      ],
+      ["Marechaussee Hunter", "Alternative with Furina."]
+    ],
+    "profile": "carry"
+  },
+  "Mualani": {
+    "sets": [
+      ["Obsidian Codex", "First choice for her Nightsoul damage."],
+      ["Heart of Depth", "Interim Normal Attack set."],
+      ["Unfinished Reverie", "Situational alternative in Burnvape teams."]
+    ],
+    "profile": "carry",
+    "sands": ["hp_", "eleMas"],
+    "goblet": ["hydro_dmg_", "hp_"],
+    "weights": {
+      "critRate_": 1,
+      "critDMG_": 1,
+      "hp_": 0.9,
+      "eleMas": 0.75,
+      "enerRech_": 0.3
+    }
+  },
+  "Kinich": {
+    "sets": [
+      ["Obsidian Codex", "First choice for his Nightsoul damage."],
+      ["Unfinished Reverie", "Alternative in Burning teams."]
+    ],
+    "profile": "carry"
+  },
+  "Xilonen": {
+    "sets": [
+      ["Scroll of the Hero of Cinder City", "First choice for team DMG Bonus."],
+      [
+        "Archaic Petra",
+        "Alternative if another teammate already carries Scroll."
+      ]
+    ],
+    "profile": "sustain",
+    "sands": ["enerRech_", "def_"],
+    "goblet": ["def_"],
+    "circlet": ["heal_", "def_"],
+    "weights": {
+      "enerRech_": 1,
+      "def_": 0.85,
+      "critRate_": 0.55
+    }
+  },
+  "Citlali": {
+    "sets": [
+      [
+        "Scroll of the Hero of Cinder City",
+        "First choice for reaction-based team buffs."
+      ],
+      [
+        "Tenacity of the Millelith",
+        "ATK support when another teammate carries Scroll."
+      ]
+    ],
+    "profile": "sustain",
+    "sands": ["eleMas", "enerRech_"],
+    "goblet": ["eleMas"],
+    "circlet": ["eleMas"],
+    "weights": {
+      "eleMas": 1,
+      "enerRech_": 0.9,
+      "critRate_": 0.35
+    }
+  },
+  "Navia": {
+    "sets": [
+      [
+        "Nighttime Whispers in the Echoing Woods",
+        "First choice for her Geo damage."
+      ],
+      ["Golden Troupe", "Alternative favoring Skill damage."]
+    ]
+  },
+  "Wriothesley": {
+    "sets": [
+      [
+        "Marechaussee Hunter",
+        "General-purpose choice for his self-changing HP."
+      ],
+      [
+        "Disenchantment in Deep Shadow",
+        "Damage upgrade in Stellar-Conduct teams."
+      ],
+      ["Unfinished Reverie", "Situational option for Burnmelt."]
+    ],
+    "profile": "carry"
+  },
+  "Raiden Shogun": {
+    "sets": [
+      [
+        "Emblem of Severed Fate",
+        "First choice for an Energy Recharge and Burst-focused build."
+      ],
+      ["Marechaussee Hunter", "On-field alternative with Furina and a healer."]
+    ],
+    "guide": "raiden-quickguide"
+  },
+  "Yelan": {
+    "sets": [
+      [
+        "Emblem of Severed Fate",
+        "First choice for her off-field Burst damage."
+      ],
+      ["Marechaussee Hunter", "On-field alternative in a Furina team."],
+      ["Nymph's Dream", "Existing set option with low Energy Recharge needs."]
+    ],
+    "goblet": ["hydro_dmg_", "hp_"]
+  },
+  "Xingqiu": {
+    "sets": [
+      ["Emblem of Severed Fate", "First choice for off-field Burst damage."],
+      [
+        "Noblesse Oblige",
+        "Support option when team ATK matters more than his damage."
+      ]
+    ]
+  },
+  "Xiangling": {
+    "sets": [
+      ["Emblem of Severed Fate", "First choice for most Pyronado builds."],
+      [
+        "Crimson Witch of Flames",
+        "Alternative for teams where she triggers Pyro reactions."
+      ],
+      ["Gilded Dreams", "Alternative for reaction-heavy teams."]
+    ],
+    "sands": ["enerRech_", "atk_", "eleMas"]
+  },
+  "Bennett": {
+    "sets": [
+      ["Noblesse Oblige", "General choice for team ATK support."],
+      [
+        "Scroll of the Hero of Cinder City",
+        "Alternative for teams that benefit from DMG Bonus."
+      ],
+      ["Instructor", "Situational choice for reaction teams."]
+    ],
+    "sands": ["enerRech_", "hp_"]
+  },
+  "Fischl": {
+    "sets": [
+      ["Golden Troupe", "First choice for Oz's off-field damage."],
+      [
+        "Gilded Dreams",
+        "Situational alternative in Aggravate or Electro-Charged."
+      ]
+    ]
+  },
+  "Nahida": {
+    "sets": [
+      [
+        "Deepwood Memories",
+        "General choice when the team needs a Dendro RES shred holder."
+      ],
+      [
+        "Scroll of the Hero of Cinder City",
+        "Team support option with another Deepwood holder."
+      ]
+    ]
+  },
+  "Hu Tao": {
+    "sets": [
+      ["Crimson Witch of Flames", "Reliable pick for Vaporize."],
+      [
+        "Shimenawa's Reminiscence",
+        "Charged Attack option that trades away Burst access."
+      ],
+      ["Gilded Dreams", "Reaction alternative with strong substats."]
+    ],
+    "guide": "hu-tao-quickguide"
+  },
+  "Alhaitham": {
+    "sets": [
+      [
+        "Gilded Dreams",
+        "First choice when another member holds Deepwood Memories."
+      ],
+      ["Deepwood Memories", "Use if no teammate can cover Dendro RES shred."]
+    ]
+  },
+  "Kaedehara Kazuha": {
+    "sets": [
+      ["Viridescent Venerer", "Default off-field team support set."],
+      [
+        "Thundering Fury",
+        "Niche quickswap option for multiple Skill casts in Electro teams."
+      ]
+    ],
+    "guide": "kazuha-quickguide"
+  }
+}

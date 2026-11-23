@@ -1,3 +1,4 @@
+import { slots } from "@/lib/model";
 import type {
   Artifact,
   Character,
@@ -98,10 +99,11 @@ export function metadataStat(id: number, value: number): Stat | undefined {
 
 function equipmentStat(
   prop: string | undefined,
-  value: number,
+  value: number | undefined,
 ): Stat | undefined {
   const key = numericProps[namedProps[prop?.replace(/^FIGHT_PROP_/, "") ?? ""]];
-  if (key && Number.isFinite(value)) return { key, value };
+  if (key && value !== undefined && Number.isFinite(value))
+    return { key, value };
 }
 
 export function normalizeWeapon(
@@ -121,7 +123,8 @@ export function normalizeWeapon(
     ascension: entry.weapon?.promoteLevel ?? 0,
     refinement: (Object.values(entry.weapon?.affixMap ?? {})[0] ?? 0) + 1,
     stats: (entry.flat?.weaponStats ?? []).flatMap(
-      (stat) => equipmentStat(stat.mainPropId, stat.propValue) ?? [],
+      (stat) =>
+        equipmentStat(stat.mainPropId, stat.statValue ?? stat.propValue) ?? [],
     ),
   };
 }
@@ -132,19 +135,23 @@ function normalizeArtifact(
   owner: string,
 ): Artifact | undefined {
   const raw = entry.flat?.reliquaryMainstat;
-  const slot = slotCodes[entry.flat?.equipType ?? ""];
-  const main = raw && equipmentStat(raw.mainPropId, raw.propValue);
-  if (!slot || !main) return;
   const item = catalog.relics.Items[entry.itemId];
-  const set = item && catalog.relics.Sets[item.SetId];
+  const slot = slotCodes[entry.flat?.equipType ?? ""] ?? slots[item?.EquipType];
+  const main =
+    raw && equipmentStat(raw.mainPropId, raw.statValue ?? raw.propValue);
+  if (!slot || !main) return;
+  const setId = entry.flat?.setId || item?.SetId;
+  const set = setId ? catalog.relics.Sets[setId] : undefined;
   const rolls = (entry.reliquary?.appendPropIdList ?? []).flatMap(
     (id) => catalog.affixes[id] ?? [],
   );
   return {
     id: `${owner}-${slot}`,
-    setId: item?.SetId ? String(item.SetId) : undefined,
+    name: catalog.loc[String(entry.flat?.nameTextMapHash)],
+    setId: setId ? String(setId) : undefined,
     setName:
-      catalog.loc[String(entry.flat?.setNameTextMapHash ?? set?.Name)] ??
+      catalog.loc[String(entry.flat?.setNameTextMapHash)] ??
+      catalog.loc[String(set?.Name)] ??
       "Unknown set",
     icon: asset(entry.flat?.icon ?? item?.Icon),
     slot,
@@ -152,7 +159,10 @@ function normalizeArtifact(
     level: Math.max(0, (entry.reliquary?.level ?? 1) - 1),
     main,
     substats: (entry.flat?.reliquarySubstats ?? []).flatMap((rawStat) => {
-      const stat = equipmentStat(rawStat.appendPropId, rawStat.propValue);
+      const stat = equipmentStat(
+        rawStat.appendPropId ?? rawStat.appendPropID,
+        rawStat.statValue ?? rawStat.propValue,
+      );
       if (!stat) return [];
       const matching = rolls.filter(
         (roll) => numericProps[roll.PropType] === stat.key,

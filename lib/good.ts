@@ -151,7 +151,7 @@ export function setOptions(catalog: Catalog) {
   return Object.entries(catalog.relics.Sets)
     .flatMap(([id, set]) => {
       const name = catalog.loc[set.Name];
-      return name ? [{ id, name }] : [];
+      return name ? [{ id, name, icon: artifactIcon(catalog, id, 0) }] : [];
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -162,7 +162,7 @@ function artifactIcon(
   catalog: Catalog,
   setId: string,
   type: number,
-  rarity: number,
+  rarity?: number,
 ) {
   let index = itemsBySet.get(catalog);
   if (!index) {
@@ -172,10 +172,16 @@ function artifactIcon(
         `${entry.SetId}:${entry.EquipType}:${entry.Rarity}`,
         entry.Icon,
       );
+      index.set(`${entry.SetId}:${entry.EquipType}`, entry.Icon);
+      index.set(entry.SetId.toString(), entry.Icon);
     }
     itemsBySet.set(catalog, index);
   }
-  return asset(index.get(`${setId}:${type}:${rarity}`));
+  return asset(
+    index.get(`${setId}:${type}:${rarity}`) ??
+      index.get(`${setId}:${type}`) ??
+      index.get(setId),
+  );
 }
 
 export function makeArtifact(

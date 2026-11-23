@@ -35,6 +35,10 @@ This fan project is unaffiliated with and unendorsed by HoYoverse. Genshin Impac
 
 Supplemental English descriptions are loaded on demand from [genshin-db](https://github.com/theBowja/genshin-db). Enka.Network hosts artwork and equipment icons, and [Paimon.moe](https://github.com/MadeBaruna/paimon-moe) hosts element icons. Static data URLs use pinned revisions so a catalog update can be verified before it ships.
 
+Artifact verdict entries backed by [KeqingMains character guides](https://keqingmains.com/) link to their sources and describe when to use each set. Character pages without a verified guide entry display the dashboard's build suggestions as starting points.
+
+Every character page can open a self-contained glTF 2.0 `.glb` model up to 35 MiB. Choose **Load 3D model** in Details / Stats. Files are remembered per character in this browser, and splash art remains available. The viewer is provided by [Google model-viewer](https://modelviewer.dev/docs/).
+
 ## Phase A damage estimates
 
 The in-browser Web Worker applies average critical hits, enemy DEF/RES, damage bonus, talent-level scaling, a single eligible reaction trigger, and the selected rotation template. The comparison uses generic hit coefficients, interpolated reaction level scaling, and user-controlled uptime and buff assumptions. It models one target with uniform resistance and leaves energy, exact multipliers, special mechanics, weapon passives, and aura timing outside the estimate. The effectiveness score measures role and reaction coverage on a 0–100 scale.
