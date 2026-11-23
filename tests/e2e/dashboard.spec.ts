@@ -117,13 +117,15 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await page.getByLabel("Genshin UID").fill("618285856");
   await page.getByRole("button", { name: "Import showcase" }).click();
   await expect(page.getByText("Traveler Example")).toBeVisible();
-  await page.getByRole("link", { name: /Kamisato Ayaka/ }).click();
+  await page.getByRole("button", { name: /Kamisato Ayaka/ }).click();
   await expect(
-    page.getByRole("heading", { name: "Kamisato Ayaka" }),
+    page
+      .getByRole("dialog", { name: /Kamisato Ayaka/ })
+      .getByRole("heading", { name: "Kamisato Ayaka" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("img", { name: "Kamisato Ayaka" }),
-  ).toHaveAttribute("src", /UI_Gacha_AvatarImg_Ayaka/);
+    page.getByRole("dialog", { name: /Kamisato Ayaka/ }),
+  ).toBeVisible();
   await expect(page.locator(".combat-stat[data-essential] dt")).toHaveText([
     "ATKEssential",
     "CRIT RateEssential",
@@ -145,7 +147,8 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   );
   await page.getByRole("tab", { name: "Talents" }).click();
   await expect(page.getByText("Elemental Burst · Lv. 9")).toBeVisible();
-  await page.getByRole("link", { name: "Team builder", exact: true }).click();
+  await page.getByRole("button", { name: "Close details" }).click();
+  await page.getByRole("link", { name: "Teams", exact: true }).click();
   await page.getByRole("button", { name: "Choose slot 1" }).click();
   await page.getByRole("button", { name: /Kamisato Ayaka/ }).click();
   await expect(
@@ -269,7 +272,8 @@ test("opens, remembers, and removes a character's local 3D model", async ({
   await page.goto("/");
   await page.getByLabel("Genshin UID").fill("618285856");
   await page.getByRole("button", { name: "Import showcase" }).click();
-  await page.getByRole("link", { name: /Kamisato Ayaka/ }).click();
+  await page.getByRole("button", { name: /Kamisato Ayaka/ }).waitFor();
+  await page.goto("/character/10000002");
   await page.getByLabel("Load 3D model").setInputFiles({
     name: "bad.glb",
     mimeType: "model/gltf-binary",

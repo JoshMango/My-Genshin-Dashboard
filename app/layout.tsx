@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { DashboardProvider } from "@/components/dashboard-state";
+import { CharacterDrawerProvider } from "@/components/character-drawer";
+import { MainNav } from "@/components/main-nav";
 import { ThemeController } from "@/components/theme-controller";
 import "./globals.css";
 
@@ -27,16 +29,13 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Link className="brand" href="/">
               <span aria-hidden="true">◆</span> My Genshin Dashboard
             </Link>
-            <nav aria-label="Main navigation" className="main-nav">
-              <Link href="/">Profile</Link>
-              <Link href="/teams">Team builder</Link>
-              <Link href="/compare">Compare</Link>
-              <Link href="/settings">Settings</Link>
-            </nav>
+            <MainNav />
           </div>
         </header>
         <main className="shell" id="main" tabIndex={-1}>
-          <DashboardProvider>{children}</DashboardProvider>
+          <DashboardProvider>
+            <CharacterDrawerProvider>{children}</CharacterDrawerProvider>
+          </DashboardProvider>
         </main>
         <footer className="shell site-footer">
           <p>
@@ -44,7 +43,6 @@ export default function Layout({ children }: { children: ReactNode }) {
             is unaffiliated with and unendorsed by HoYoverse.
           </p>
           <nav aria-label="Project information" className="main-nav">
-            <Link href="/about">About</Link>
             <Link href="/privacy">Privacy</Link>
           </nav>
         </footer>

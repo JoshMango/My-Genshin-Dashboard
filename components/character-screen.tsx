@@ -34,7 +34,13 @@ export function CharacterScreen({ id }: { id: string }) {
   );
 }
 
-function CharacterDetails({ character }: { character: Character }) {
+export function CharacterDetails({
+  character,
+  compact = false,
+}: {
+  character: Character;
+  compact?: boolean;
+}) {
   const [tab, setTab] = useState(0);
   const [details, setDetails] = useState<Descriptions>();
   useEffect(() => {
@@ -80,7 +86,7 @@ function CharacterDetails({ character }: { character: Character }) {
   const identity = (
     <header className="detail-identity">
       <ElementBadge element={character.element} />
-      <h1>{character.name}</h1>
+      {compact ? <h2>{character.name}</h2> : <h1>{character.name}</h1>}
       <p className="muted">
         Lv. {character.level} · Ascension {character.ascension} · C
         {character.constellation}
@@ -90,9 +96,11 @@ function CharacterDetails({ character }: { character: Character }) {
 
   return (
     <>
-      <Link className="back-link" href="/">
-        Character roster
-      </Link>
+      {!compact && (
+        <Link className="back-link" href="/">
+          Character roster
+        </Link>
+      )}
       <section
         className="character-detail section-space"
         data-element={character.element}
@@ -129,8 +137,8 @@ function CharacterDetails({ character }: { character: Character }) {
           {tab !== 0 && identity}
           {tab === 0 && (
             <>
-              <div className="character-overview">
-                <CharacterAppearance character={character} />
+              <div className={compact ? undefined : "character-overview"}>
+                {!compact && <CharacterAppearance character={character} />}
                 <div className="panel">
                   {identity}
                   <CombatStats character={character} />

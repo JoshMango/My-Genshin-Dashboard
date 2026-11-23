@@ -17,6 +17,8 @@ import { blankTeam, parseTeams, type Team } from "@/lib/teams";
 const noTeams: Team[] = [];
 
 type Dashboard = {
+  whatIf?: { original: Character; variant: Character };
+  setWhatIf: (build: { original: Character; variant: Character }) => void;
   profile?: Profile;
   setProfile: (profile: Profile) => boolean;
   roster: Roster;
@@ -33,6 +35,7 @@ type Dashboard = {
 const DashboardContext = createContext<Dashboard | null>(null);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
+  const [whatIf, setWhatIf] = useState<Dashboard["whatIf"]>();
   const [draft, setDraft] = useState(blankTeam);
   const [saved, setSaved] = useBrowserState(
     "genshin.teams.v1",
@@ -47,6 +50,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   return (
     <DashboardContext.Provider
       value={{
+        whatIf,
+        setWhatIf,
         profile: roster.profile,
         setProfile: (next) =>
           setRoster((previous) => withShowcase(previous, next)),

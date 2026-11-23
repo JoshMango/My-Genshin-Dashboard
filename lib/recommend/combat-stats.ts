@@ -92,8 +92,8 @@ export function combatStatLayout(
       ? "physical_dmg_"
       : (`${character.element.toLowerCase()}_dmg_` as StatKey);
   return {
-    left: ["hp", "atk", "def", "eleMas"] as StatKey[],
-    right: [...critStats, "enerRech_", main] as StatKey[],
+    left: ["hp", "atk", "def", "eleMas", "enerRech_"] as StatKey[],
+    right: [...critStats, main] as StatKey[],
     secondary: damageBonusKeys.filter((key) => key !== main),
     extra:
       character.name === "Sangonomiya Kokomi" ? ("heal_" as const) : undefined,

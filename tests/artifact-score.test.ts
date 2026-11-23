@@ -62,8 +62,8 @@ it("highlights the character's actual scaling and uses guide-backed signature se
     "critDMG_",
   ]);
   expect(combatStatLayout(mavuika)).toMatchObject({
-    left: ["hp", "atk", "def", "eleMas"],
-    right: ["critRate_", "critDMG_", "enerRech_", "pyro_dmg_"],
+    left: ["hp", "atk", "def", "eleMas", "enerRech_"],
+    right: ["critRate_", "critDMG_", "pyro_dmg_"],
   });
   expect(combatStatLayout({ name: "Eula", element: "Cryo" }).right.at(-1)).toBe(
     "physical_dmg_",

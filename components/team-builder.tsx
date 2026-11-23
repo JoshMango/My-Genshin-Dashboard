@@ -25,6 +25,7 @@ import type { Character } from "@/lib/model";
 import { useDashboard } from "./dashboard-state";
 import { ElementBadge, GameIcon } from "./game-icon";
 import { useCatalog } from "./use-catalog";
+import { useOpenCharacter } from "./character-drawer";
 import { TeamRecommendations } from "./team-recommendations";
 
 export function TeamFeedback({ team }: { team: Team }) {
@@ -60,6 +61,7 @@ export function TeamFeedback({ team }: { team: Team }) {
 }
 
 export function TeamBuilder() {
+  const openCharacter = useOpenCharacter();
   const { characters, draft, setDraft, saved, setSaved } = useDashboard();
   const { catalog, failure, retry } = useCatalog();
   const [selected, setSelected] = useState<number | null>(null);
@@ -235,6 +237,14 @@ export function TeamBuilder() {
               </button>
               {character && (
                 <div className="slot-actions">
+                  <button
+                    type="button"
+                    className="quiet compact"
+                    onClick={() => openCharacter(character)}
+                    aria-label={`Inspect ${character.name}`}
+                  >
+                    Details
+                  </button>
                   <ElementBadge element={character.element} />
                   <button
                     className="quiet compact"
