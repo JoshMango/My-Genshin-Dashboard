@@ -7,6 +7,8 @@ import type { EnkaResponse } from "@/lib/enka/types";
 import { CharacterCard } from "./character-card";
 import { useDashboard } from "./dashboard-state";
 import { GameIcon } from "./game-icon";
+import { InventoryImport } from "./inventory-import";
+import { ManualBuild } from "./manual-build";
 
 export function ProfileScreen() {
   const { profile, setProfile, characters } = useDashboard();
@@ -85,6 +87,10 @@ export function ProfileScreen() {
           )}
         </div>
       </section>
+      <div className="import-grid section-space">
+        <InventoryImport />
+        <ManualBuild />
+      </div>
 
       <section
         className="section-space"

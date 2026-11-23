@@ -18,6 +18,7 @@ export function CharacterCard({ character }: { character: Character }) {
           <h3>{character.name}</h3>
           <span>
             Lv. {character.level} · C{character.constellation}
+            {character.source === "preview" && " · Not owned"}
           </span>
         </div>
       </Link>

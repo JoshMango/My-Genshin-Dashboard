@@ -651,3 +651,129 @@ input[type="checkbox"] {
 .file-upload input {
   width: 100%;
 }
+.stack {
+  display: grid;
+  gap: 0.8rem;
+}
+.stack > button {
+  justify-self: start;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.import-grid,
+.saved-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+.import-panel .stack {
+  margin-top: 0.8rem;
+}
+.substat-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+.team-slots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.team-slot {
+  background: radial-gradient(
+    ellipse at bottom,
+    var(--element, var(--panel-deep)),
+    var(--panel-deep)
+  );
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.slot-button {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 9rem;
+  text-align: center;
+}
+.slot-button[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+.slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.2rem;
+  padding: 0.3rem 0.4rem;
+}
+.compact {
+  padding: 0.24rem 0.45rem;
+  font-size: 0.85rem;
+}
+.picker {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: clamp(0.6rem, 2vw, 1rem);
+}
+.picker h3 {
+  margin-top: 0.9rem;
+}
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 0.45rem;
+}
+.picker-scroll {
+  max-height: 20rem;
+  overflow: auto;
+  padding: 0.25rem;
+}
+.picker-card {
+  justify-content: flex-start;
+  text-align: left;
+  min-height: 3.2rem;
+  padding: 0.35rem;
+}
+.picker-card img {
+  flex-shrink: 0;
+}
+.picker-card small {
+  display: block;
+  color: var(--muted);
+  font-weight: 400;
+}
+.team-feedback {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.55rem;
+}
+.team-feedback div {
+  background: var(--panel-deep);
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+}
+.team-feedback dt {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.team-feedback dd {
+  margin: 0;
+  font-weight: 650;
+}
+@media (max-width: 42rem) {
+  .team-slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

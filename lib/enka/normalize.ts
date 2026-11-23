@@ -23,10 +23,10 @@ const elements: Record<string, Element> = {
 };
 const weaponTypes: Record<string, number> = {
   WEAPON_SWORD_ONE_HAND: 1,
-  WEAPON_CLAYMORE: 11,
-  WEAPON_POLE: 13,
-  WEAPON_CATALYST: 10,
-  WEAPON_BOW: 12,
+  WEAPON_CLAYMORE: 2,
+  WEAPON_POLE: 4,
+  WEAPON_CATALYST: 5,
+  WEAPON_BOW: 3,
 };
 const slotCodes: Record<string, Slot> = {
   EQUIP_BRACER: "Flower",
