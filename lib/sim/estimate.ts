@@ -40,10 +40,11 @@ export type SimulationResult = {
   trigger?: string;
 };
 export type SimulationRequest = { team: Team; rotation: Rotation };
-export interface SimulationEngine {
-  simulate(
-    request: SimulationRequest,
-  ): SimulationResult | Promise<SimulationResult>;
+export interface SimulationEngine<
+  Request = SimulationRequest,
+  Result = SimulationResult,
+> {
+  simulate(request: Request): Result | Promise<Result>;
 }
 
 const transform: Partial<Record<Reaction, number>> = {

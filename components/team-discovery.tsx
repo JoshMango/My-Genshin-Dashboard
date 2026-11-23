@@ -327,7 +327,7 @@ export function TeamDiscovery() {
                       type="button"
                       className="quiet picker-card"
                       key={character.id}
-                      onClick={() => open(character)}
+                      onClick={() => open(character, team)}
                     >
                       <GameIcon src={character.icon} size={48} alt="" />
                       <span>
@@ -370,7 +370,7 @@ export function TeamDiscovery() {
                   <button
                     type="button"
                     className="quiet"
-                    onClick={() => send(team, "/compare")}
+                    onClick={() => send(team, "/compare?simulate=1")}
                   >
                     Simulate
                   </button>

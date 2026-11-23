@@ -240,7 +240,7 @@ export function TeamBuilder() {
                   <button
                     type="button"
                     className="quiet compact"
-                    onClick={() => openCharacter(character)}
+                    onClick={() => openCharacter(character, draft)}
                     aria-label={`Inspect ${character.name}`}
                   >
                     Details
@@ -404,12 +404,15 @@ export function TeamBuilder() {
               <div className="input-row">
                 {team.slots.flatMap((character) =>
                   character ? (
-                    <GameIcon
+                    <button
                       key={characterGroup(character.id)}
-                      src={character.icon}
-                      alt={character.name}
-                      size={40}
-                    />
+                      type="button"
+                      className="quiet"
+                      aria-label={`Inspect ${character.name}`}
+                      onClick={() => openCharacter(character, team)}
+                    >
+                      <GameIcon src={character.icon} alt="" size={40} />
+                    </button>
                   ) : (
                     []
                   ),
@@ -439,6 +442,9 @@ export function TeamBuilder() {
                 >
                   Duplicate
                 </button>
+                <Link href={`/compare?team=${encodeURIComponent(team.id)}`}>
+                  Open in Compare
+                </Link>
               </div>
               <label className="checkbox-label">
                 <input

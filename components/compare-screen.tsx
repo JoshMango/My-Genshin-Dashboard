@@ -13,6 +13,7 @@ import { placeCharacter, type Archetype, type Team } from "@/lib/teams";
 import { useDashboard } from "./dashboard-state";
 import { useCatalog } from "./use-catalog";
 import { useSimulation } from "./use-simulation";
+import { GcsimPanel } from "./gcsim-panel";
 
 const number = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
 const fields: {
@@ -34,22 +35,32 @@ const fields: {
 
 export function CompareScreen({
   fromDrawer = false,
+  autoSimulate = false,
+  initialTeam = "",
 }: {
   fromDrawer?: boolean;
+  autoSimulate?: boolean;
+  initialTeam?: string;
 }) {
   const { draft, saved, characters, whatIf } = useDashboard();
   const { catalog } = useCatalog();
-  const [baselineId, setBaseline] = useState("");
-  const drawerComparison = useMemo(
-    () =>
-      fromDrawer && whatIf
-        ? {
-            original: { ...draft, slots: [whatIf.original, null, null, null] },
-            variant: { ...draft, slots: [whatIf.variant, null, null, null] },
-          }
-        : undefined,
-    [fromDrawer, whatIf, draft],
-  );
+  const [baselineId, setBaseline] = useState(initialTeam);
+  const drawerComparison = useMemo(() => {
+    if (!fromDrawer || !whatIf) return;
+    const original = whatIf.team ?? {
+      ...draft,
+      slots: [whatIf.original, null, null, null],
+    };
+    return {
+      original,
+      variant: {
+        ...original,
+        slots: original.slots.map((member) =>
+          member?.id === whatIf.original.id ? whatIf.variant : member,
+        ),
+      },
+    };
+  }, [fromDrawer, whatIf, draft]);
   const base =
     saved.find((team) => team.id === baselineId) ??
     drawerComparison?.original ??
@@ -293,6 +304,12 @@ export function CompareScreen({
           </>
         )}
       </section>
+      <GcsimPanel
+        baseline={base}
+        variant={variant}
+        rotation={effectiveRotation}
+        auto={autoSimulate}
+      />
       {saved.length >= 2 && (
         <section className="panel section-space stack">
           <h2>Compare saved teams</h2>

@@ -10,26 +10,30 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import type { Character } from "@/lib/model";
+import type { Team } from "@/lib/teams";
 import { CharacterDetails } from "./character-screen";
 import { GearEditor } from "./gear-editor";
 import { useDashboard } from "./dashboard-state";
 import { useCatalog } from "./use-catalog";
 
-const OpenCharacter = createContext<(character: Character) => void>(
-  () => undefined,
-);
+const OpenCharacter = createContext<
+  (character: Character, team?: Team) => void
+>(() => undefined);
 export const useOpenCharacter = () => useContext(OpenCharacter);
 
 export function CharacterDrawerProvider({ children }: { children: ReactNode }) {
-  const [character, open] = useState<Character>();
+  const [entry, setEntry] = useState<{ character: Character; team?: Team }>();
   return (
-    <OpenCharacter.Provider value={open}>
+    <OpenCharacter.Provider
+      value={(character, team) => setEntry({ character, team })}
+    >
       {children}
-      {character && (
+      {entry && (
         <Drawer
-          key={character.id}
-          character={character}
-          close={() => open(undefined)}
+          key={entry.character.id}
+          character={entry.character}
+          team={entry.team}
+          close={() => setEntry(undefined)}
         />
       )}
     </OpenCharacter.Provider>
@@ -38,9 +42,11 @@ export function CharacterDrawerProvider({ children }: { children: ReactNode }) {
 
 function Drawer({
   character,
+  team,
   close,
 }: {
   character: Character;
+  team?: Team;
   close: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -95,7 +101,7 @@ function Drawer({
                 <button
                   type="button"
                   onClick={() => {
-                    setWhatIf({ original: character, variant });
+                    setWhatIf({ original: character, variant, team });
                     dialog.current?.close();
                     router.push("/compare?build=1");
                   }}
@@ -115,7 +121,7 @@ function Drawer({
             )}
           </section>
         )}
-        <CharacterDetails character={variant} compact />
+        <CharacterDetails character={variant} team={team} compact />
       </div>
     </dialog>
   );

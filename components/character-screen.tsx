@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useState, type KeyboardEvent } from "react";
 import { artifactPieceFields, loadDescriptions } from "@/lib/enka/descriptions";
 import { formatStat, slots, statLabels, type Character } from "@/lib/model";
+import type { Team } from "@/lib/teams";
 import { ArtifactSlot } from "./artifact-slot";
 import { ArtifactVerdict } from "./artifact-verdict";
 import { CharacterAppearance } from "./character-appearance";
@@ -37,10 +38,13 @@ export function CharacterScreen({ id }: { id: string }) {
 export function CharacterDetails({
   character,
   compact = false,
+  team,
 }: {
   character: Character;
   compact?: boolean;
+  team?: Team;
 }) {
+  const panelId = useId();
   const [tab, setTab] = useState(0);
   const [details, setDetails] = useState<Descriptions>();
   useEffect(() => {
@@ -69,7 +73,7 @@ export function CharacterDetails({
     if (index !== tab || event.key === "Home" || event.key === "End") {
       event.preventDefault();
       setTab(index);
-      document.getElementById(`character-tab-${index}`)?.focus();
+      document.getElementById(`${panelId}-tab-${index}`)?.focus();
     }
   }
 
@@ -114,11 +118,11 @@ export function CharacterDetails({
             <button
               type="button"
               role="tab"
-              id={`character-tab-${index}`}
+              id={`${panelId}-tab-${index}`}
               key={label}
               aria-selected={tab === index}
               tabIndex={tab === index ? 0 : -1}
-              aria-controls="character-panel"
+              aria-controls={panelId}
               className={tab === index ? "" : "quiet"}
               onClick={() => setTab(index)}
               onKeyDown={navigate}
@@ -130,8 +134,8 @@ export function CharacterDetails({
         <div
           className={tab === 0 ? "detail-panel" : "panel detail-panel"}
           role="tabpanel"
-          id="character-panel"
-          aria-labelledby={`character-tab-${tab}`}
+          id={panelId}
+          aria-labelledby={`${panelId}-tab-${tab}`}
           tabIndex={0}
         >
           {tab !== 0 && identity}
@@ -237,7 +241,7 @@ export function CharacterDetails({
             </>
           )}
           {(tab === 0 || tab === 1) && (
-            <ArtifactVerdict character={character} />
+            <ArtifactVerdict character={character} team={team} />
           )}
           {tab === 2 && (
             <>

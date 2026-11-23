@@ -16,9 +16,11 @@ import { blankTeam, parseTeams, type Team } from "@/lib/teams";
 
 const noTeams: Team[] = [];
 
+type WhatIf = { original: Character; variant: Character; team?: Team };
+
 type Dashboard = {
-  whatIf?: { original: Character; variant: Character };
-  setWhatIf: (build: { original: Character; variant: Character }) => void;
+  whatIf?: WhatIf;
+  setWhatIf: (build: WhatIf) => void;
   profile?: Profile;
   setProfile: (profile: Profile) => boolean;
   roster: Roster;

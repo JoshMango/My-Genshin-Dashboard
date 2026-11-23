@@ -8,15 +8,22 @@ import {
   artifactUpgrades,
   recommendBuild,
 } from "@/lib/recommend/artifacts";
-import { roles } from "@/lib/teams";
+import { roles, type Team } from "@/lib/teams";
 import { useDashboard } from "./dashboard-state";
 import { GameIcon } from "./game-icon";
 import { useCatalog } from "./use-catalog";
 
-export function ArtifactVerdict({ character }: { character: Character }) {
+export function ArtifactVerdict({
+  character,
+  team,
+}: {
+  character: Character;
+  team?: Team;
+}) {
   const { draft, good } = useDashboard();
   const { catalog } = useCatalog();
-  const profile = recommendBuild(character, draft);
+  const lineup = team ?? draft;
+  const profile = recommendBuild(character, lineup);
   const setIcons = useMemo(
     () =>
       new Map(
@@ -39,8 +46,9 @@ export function ArtifactVerdict({ character }: { character: Character }) {
           {profile.role === "trigger"
             ? "Reaction trigger"
             : roles[profile.role]}{" "}
-          · {draft.goal.archetype}
-          {draft.goal.archetype !== "Hypercarry" && ` · ${draft.goal.reaction}`}
+          · {lineup.goal.archetype}
+          {lineup.goal.archetype !== "Hypercarry" &&
+            ` · ${lineup.goal.reaction}`}
         </p>
       </div>
       <div className="verdict-grid">
@@ -102,6 +110,22 @@ export function ArtifactVerdict({ character }: { character: Character }) {
               This build does not prioritize Energy Recharge.
             </p>
           )}
+          <p className="muted">
+            <strong>Starting targets</strong> ·{" "}
+            {[
+              profile.er.length ? `${profile.er.join("–")}% ER` : "",
+              profile.priority.includes("eleMas")
+                ? `${profile.em.join("–")} EM`
+                : "",
+              profile.priority.some(
+                (key) => key === "critRate_" || key === "critDMG_",
+              ) && profile.role !== "trigger"
+                ? `${profile.crit.join("/")} CRIT Rate/DMG`
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" · ") || "Depends on the build."}
+          </p>
         </div>
       </div>
       {character.artifacts.length > 0 && (

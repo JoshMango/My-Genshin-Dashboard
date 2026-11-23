@@ -38,7 +38,7 @@ export function characterTags(character: Character): CharacterTags {
   const tag = Object.hasOwn(tagsByName, character.name)
     ? tagsByName[character.name]
     : {};
-  const assigned = tag.roles ?? characterRoles(character);
+  const assigned = characterRoles(character);
   return {
     element: character.element,
     applications: (Object.keys(reactions) as Reaction[]).filter(

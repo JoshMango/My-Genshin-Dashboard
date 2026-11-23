@@ -44,6 +44,8 @@ const data: Record<string, unknown> = {
       "6": "Nahida",
       "7": "Xingqiu",
       "8": "Kuki Shinobu",
+      "9": "Favonius Sword",
+      "10": "Favonius Codex",
     },
   },
   "namecards.json": {},
@@ -380,6 +382,16 @@ test("discovers a Hyperbloom team from the owned roster and sends it to Compare"
             avatarId,
             propMap: { "4001": { val: "90" } },
             fightPropMap: { "2001": 1600, "28": 150 },
+            equipList: [
+              {
+                itemId: avatarId === 10000073 ? 14401 : 11401,
+                weapon: { level: 90, promoteLevel: 6 },
+                flat: {
+                  nameTextMapHash: avatarId === 10000073 ? "10" : "9",
+                  rankLevel: 4,
+                },
+              },
+            ],
           }),
         ),
       },
@@ -423,10 +435,22 @@ test("discovers a Hyperbloom team from the owned roster and sends it to Compare"
     page.getByRole("status").filter({ hasText: "Saved Nahida" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Simulate", exact: true }).click();
-  await expect(page).toHaveURL(/\/compare$/);
+  await expect(page).toHaveURL(/\/compare\?simulate=1$/);
   await expect(
     page
       .getByRole("progressbar", { name: "Kuki Shinobu damage share" })
       .first(),
   ).toBeVisible();
+  await expect(page.getByText(/simulated team DPS/)).toBeVisible({
+    timeout: 45_000,
+  });
+  await expect(
+    page.getByText(/^[1-9][\d,]* simulated team DPS$/),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Teams", exact: true }).click();
+  await page.getByRole("link", { name: "Open in Compare" }).click();
+  await expect(page).toHaveURL(/\/compare\?team=/);
+  await expect(
+    page.getByRole("combobox", { name: "Baseline team" }),
+  ).not.toHaveValue("");
 });

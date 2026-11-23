@@ -16,10 +16,10 @@ export default function PrivacyPage() {
       </p>
       <h2>Your browser data</h2>
       <p>
-        Saved teams, themes, manual builds, local 3D models, and imported GOOD
-        inventory stay in browser storage. Damage calculations run in your
-        browser. You can download your data as JSON or clear this site’s storage
-        to remove local copies.
+        Saved teams, themes, the merged roster, local 3D models, and imported
+        GOOD inventory stay in browser storage. Team discovery and damage
+        calculations run in your browser. You can download your roster and teams
+        as JSON or clear this site’s storage to remove local copies.
       </p>
       <h2>External data and images</h2>
       <p>

@@ -11,6 +11,7 @@ import {
   type Suggestion,
 } from "@/lib/recommend/team";
 import { placeCharacter, type Team } from "@/lib/teams";
+import { useOpenCharacter } from "./character-drawer";
 import { GameIcon } from "./game-icon";
 
 export function TeamRecommendations({
@@ -26,6 +27,7 @@ export function TeamRecommendations({
   roster: Character[];
   update: (team: Team) => void;
 }) {
+  const openCharacter = useOpenCharacter();
   const [requestedSlot, setSlot] = useState<number>();
   const open = team.slots.flatMap((entry, index) => (entry ? [] : [index]));
   const slot =
@@ -42,11 +44,19 @@ export function TeamRecommendations({
   }, [entries, owned]);
   if (slot === undefined || !team.slots.some(Boolean)) return null;
 
-  const add = (candidate: Candidate) => {
+  const preview = (candidate: Candidate) => {
     const build =
       roster.find((entry) => entry.id === candidate.id) ??
       (catalog && previewCharacter(candidate.id, catalog));
-    if (build) update(placeCharacter(team, slot, build));
+    return build && { build, lineup: placeCharacter(team, slot, build) };
+  };
+  const add = (candidate: Candidate) => {
+    const result = preview(candidate);
+    if (result) update(result.lineup);
+  };
+  const inspect = (candidate: Candidate) => {
+    const result = preview(candidate);
+    if (result) openCharacter(result.build, result.lineup);
   };
   const seen = new Set<string>();
   const previews = suggest(team, slot, options).filter(({ candidate }) => {
@@ -82,11 +92,13 @@ export function TeamRecommendations({
           title="From your roster"
           suggestions={suggest(team, slot, owned).slice(0, 4)}
           choose={add}
+          inspect={inspect}
         />
         <Results
           title="Worth pulling / not owned"
           suggestions={previews.slice(0, 4)}
           choose={add}
+          inspect={inspect}
         />
       </div>
       <p className="muted">
@@ -101,10 +113,12 @@ function Results({
   title,
   suggestions,
   choose,
+  inspect,
 }: {
   title: string;
   suggestions: Suggestion[];
   choose: (candidate: Candidate) => void;
+  inspect: (candidate: Candidate) => void;
 }) {
   return (
     <div className="stack">
@@ -112,7 +126,14 @@ function Results({
       {!suggestions.length && <p className="muted">No available candidates.</p>}
       {suggestions.map(({ candidate, delta, reason }) => (
         <article className="recommend-card" key={candidate.id}>
-          <GameIcon src={candidate.icon} alt="" size={45} />
+          <button
+            className="quiet compact"
+            type="button"
+            aria-label={`Inspect ${candidate.name}`}
+            onClick={() => inspect(candidate)}
+          >
+            <GameIcon src={candidate.icon} alt="" size={45} />
+          </button>
           <div>
             <strong>{candidate.name}</strong>
             <span className="score-delta">

@@ -13,5 +13,6 @@ export default defineConfig([
     ".playwright-browsers/**",
     ".pnpm-store/**",
     ".npm-cache/**",
+    "public/gcsim/**",
   ]),
 ]);
