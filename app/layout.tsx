@@ -30,6 +30,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <nav aria-label="Main navigation" className="main-nav">
               <Link href="/">Profile</Link>
               <Link href="/teams">Team builder</Link>
+              <Link href="/compare">Compare</Link>
               <Link href="/settings">Settings</Link>
             </nav>
           </div>

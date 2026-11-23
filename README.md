@@ -24,3 +24,10 @@ Use Node.js 22 or 24 and pnpm. Run `pnpm install --frozen-lockfile`, then `pnpm 
 This fan project is unaffiliated with and unendorsed by HoYoverse. Genshin Impact assets belong to HoYoverse.
 
 Supplemental English descriptions are loaded on demand from [genshin-db](https://github.com/theBowja/genshin-db). Artwork and icons are served by Enka.Network.
+
+## Phase A damage estimates
+
+The in-browser Web Worker applies average critical hits, enemy DEF/RES, damage bonus, talent-level scaling, a single eligible reaction trigger, and the selected rotation template. The comparison uses generic hit coefficients, interpolated reaction level scaling, and user-controlled uptime and buff assumptions. It models one target with uniform resistance and leaves energy, exact multipliers, special mechanics, weapon passives, and aura timing outside the estimate. The effectiveness score measures role and reaction coverage on a 0–100 scale.
+
+- [Damage, CRIT, DEF, and RES](https://library.keqingmains.com/combat-mechanics/damage/damage-formula)
+- [Amplifying reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/amplifying-reactions), [additive reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/additive-reactions), and [transformative reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions)
