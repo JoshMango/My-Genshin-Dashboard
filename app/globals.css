@@ -777,3 +777,35 @@ input[type="checkbox"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+.recommend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+.recommend-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: var(--panel-deep);
+}
+.recommend-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0.1rem 0 0;
+}
+.narrow-field {
+  width: min(100%, 15rem);
+}
+.score-delta {
+  color: var(--accent);
+  white-space: nowrap;
+}
+.recommendations {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}

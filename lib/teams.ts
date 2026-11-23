@@ -1,4 +1,5 @@
 import rolesByName from "@/data/roles.json";
+import config from "@/data/archetypes.json";
 import { characterGroup, isCharacter, record } from "./builds";
 import { elements, type Character, type Element } from "./model";
 
@@ -12,33 +13,9 @@ export const roles = {
 export type Role = keyof typeof roles;
 export type Archetype = "Hypercarry" | "Reaction team" | "Hybrid";
 export type Goal = { archetype: Archetype; reaction: Reaction };
-export const reactions = {
-  Vaporize: [["Hydro", "Pyro"]],
-  Melt: [["Cryo", "Pyro"]],
-  Quicken: [["Dendro", "Electro"]],
-  Spread: [["Dendro", "Electro"]],
-  Aggravate: [["Dendro", "Electro"]],
-  Bloom: [["Dendro", "Hydro"]],
-  Hyperbloom: [["Dendro", "Hydro", "Electro"]],
-  Burgeon: [["Dendro", "Hydro", "Pyro"]],
-  Burning: [["Dendro", "Pyro"]],
-  Overloaded: [["Electro", "Pyro"]],
-  "Electro-Charged": [["Electro", "Hydro"]],
-  Superconduct: [["Cryo", "Electro"]],
-  Freeze: [["Cryo", "Hydro"]],
-  Swirl: [
-    ["Anemo", "Cryo"],
-    ["Anemo", "Electro"],
-    ["Anemo", "Hydro"],
-    ["Anemo", "Pyro"],
-  ],
-  Crystallize: [
-    ["Geo", "Cryo"],
-    ["Geo", "Electro"],
-    ["Geo", "Hydro"],
-    ["Geo", "Pyro"],
-  ],
-} satisfies Record<string, Element[][]>;
+export const reactions = Object.fromEntries(
+  Object.entries(config.reactions).map(([name, rule]) => [name, rule.elements]),
+) as Record<keyof typeof config.reactions, Element[][]>;
 export type Reaction = keyof typeof reactions;
 export const archetypes: Archetype[] = [
   "Hypercarry",
@@ -59,7 +36,7 @@ export const blankTeam: Team = {
   slots: [null, null, null, null],
 };
 
-export function characterRoles(character: Character): Role[] {
+export function characterRoles(character: Pick<Character, "name">): Role[] {
   const table: Partial<Record<string, Role[]>> = rolesByName as Partial<
     Record<string, Role[]>
   >;
@@ -68,8 +45,10 @@ export function characterRoles(character: Character): Role[] {
     : [];
 }
 
-export function teamInfo(slots: Team["slots"]) {
-  const lineup = slots.filter((item): item is Character => !!item);
+export function teamInfo(
+  slots: (Pick<Character, "name" | "element"> | null)[],
+) {
+  const lineup = slots.filter((item) => item !== null);
   const active = new Set(lineup.flatMap((item) => item.element ?? []));
   const roleSet = new Set(lineup.flatMap(characterRoles));
   const resonance =

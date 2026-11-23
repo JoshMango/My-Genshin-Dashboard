@@ -25,6 +25,7 @@ import type { Character } from "@/lib/model";
 import { useDashboard } from "./dashboard-state";
 import { ElementBadge, GameIcon } from "./game-icon";
 import { useCatalog } from "./use-catalog";
+import { TeamRecommendations } from "./team-recommendations";
 
 export function TeamFeedback({ team }: { team: Team }) {
   const result = teamInfo(team.slots);
@@ -337,6 +338,13 @@ export function TeamBuilder() {
           </section>
         )}
         <TeamFeedback team={draft} />
+        <TeamRecommendations
+          team={draft}
+          catalog={catalog}
+          entries={entries}
+          roster={characters}
+          update={setDraft}
+        />
         <div className="input-row">
           <button type="button" onClick={save}>
             Save team

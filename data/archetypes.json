@@ -1,0 +1,151 @@
+{
+  "goals": {
+    "Hypercarry": {
+      "roleWeights": {
+        "carry": 28,
+        "offField": 5,
+        "buffer": 25,
+        "sustain": 16,
+        "enabler": 4
+      },
+      "fullReaction": 0,
+      "element": 0,
+      "extraCarryPenalty": 7
+    },
+    "Reaction team": {
+      "roleWeights": {
+        "carry": 11,
+        "offField": 14,
+        "buffer": 10,
+        "sustain": 12,
+        "enabler": 11
+      },
+      "fullReaction": 23,
+      "element": 4,
+      "extraCarryPenalty": 4
+    },
+    "Hybrid": {
+      "roleWeights": {
+        "carry": 17,
+        "offField": 13,
+        "buffer": 13,
+        "sustain": 13,
+        "enabler": 9
+      },
+      "fullReaction": 15,
+      "element": 3,
+      "extraCarryPenalty": 5
+    }
+  },
+  "reactions": {
+    "Vaporize": {
+      "elements": [["Hydro", "Pyro"]],
+      "triggers": ["Pyro", "Hydro"],
+      "preferred": ["Xingqiu", "Yelan", "Furina", "Xiangling", "Bennett"]
+    },
+    "Melt": {
+      "elements": [["Cryo", "Pyro"]],
+      "triggers": ["Pyro", "Cryo"],
+      "preferred": ["Xiangling", "Citlali", "Rosaria", "Bennett", "Kaeya"]
+    },
+    "Quicken": {
+      "elements": [["Dendro", "Electro"]],
+      "triggers": ["Electro", "Dendro"],
+      "preferred": ["Nahida", "Fischl", "Yaoyao", "Baizhu"]
+    },
+    "Spread": {
+      "elements": [["Dendro", "Electro"]],
+      "triggers": ["Dendro"],
+      "preferred": ["Nahida", "Fischl", "Yae Miko", "Baizhu"]
+    },
+    "Aggravate": {
+      "elements": [["Dendro", "Electro"]],
+      "triggers": ["Electro"],
+      "preferred": ["Fischl", "Nahida", "Kuki Shinobu", "Kirara"]
+    },
+    "Bloom": {
+      "elements": [["Dendro", "Hydro"]],
+      "triggers": ["Hydro", "Dendro"],
+      "preferred": [
+        "Nilou",
+        "Nahida",
+        "Sangonomiya Kokomi",
+        "Baizhu",
+        "Xingqiu"
+      ]
+    },
+    "Hyperbloom": {
+      "elements": [["Dendro", "Hydro", "Electro"]],
+      "triggers": ["Electro"],
+      "preferred": [
+        "Kuki Shinobu",
+        "Raiden Shogun",
+        "Nahida",
+        "Xingqiu",
+        "Yelan"
+      ]
+    },
+    "Burgeon": {
+      "elements": [["Dendro", "Hydro", "Pyro"]],
+      "triggers": ["Pyro"],
+      "preferred": ["Thoma", "Dehya", "Nahida", "Xingqiu"]
+    },
+    "Burning": {
+      "elements": [["Dendro", "Pyro"]],
+      "triggers": ["Dendro", "Pyro"],
+      "preferred": ["Emilie", "Nahida", "Dehya", "Bennett"]
+    },
+    "Overloaded": {
+      "elements": [["Electro", "Pyro"]],
+      "triggers": ["Electro", "Pyro"],
+      "preferred": ["Chevreuse", "Fischl", "Xiangling", "Bennett"]
+    },
+    "Electro-Charged": {
+      "elements": [["Electro", "Hydro"]],
+      "triggers": ["Electro", "Hydro"],
+      "preferred": [
+        "Fischl",
+        "Beidou",
+        "Xingqiu",
+        "Sangonomiya Kokomi",
+        "Ineffa"
+      ]
+    },
+    "Superconduct": {
+      "elements": [["Cryo", "Electro"]],
+      "triggers": ["Cryo", "Electro"],
+      "preferred": ["Rosaria", "Fischl", "Mika", "Kuki Shinobu"]
+    },
+    "Freeze": {
+      "elements": [["Cryo", "Hydro"]],
+      "triggers": ["Cryo", "Hydro"],
+      "preferred": [
+        "Kamisato Ayaka",
+        "Shenhe",
+        "Sangonomiya Kokomi",
+        "Mona",
+        "Escoffier"
+      ]
+    },
+    "Swirl": {
+      "elements": [
+        ["Anemo", "Cryo"],
+        ["Anemo", "Electro"],
+        ["Anemo", "Hydro"],
+        ["Anemo", "Pyro"]
+      ],
+      "triggers": ["Anemo"],
+      "preferred": ["Kaedehara Kazuha", "Sucrose", "Venti", "Jean"]
+    },
+    "Crystallize": {
+      "elements": [
+        ["Geo", "Cryo"],
+        ["Geo", "Electro"],
+        ["Geo", "Hydro"],
+        ["Geo", "Pyro"]
+      ],
+      "triggers": ["Geo"],
+      "preferred": ["Navia", "Xilonen", "Chiori", "Zhongli"]
+    }
+  }
+}
