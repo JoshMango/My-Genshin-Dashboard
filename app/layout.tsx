@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { DashboardProvider } from "@/components/dashboard-state";
+import { ThemeController } from "@/components/theme-controller";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <ThemeController />
         <a className="skip-link" href="#main">
           Skip to content
         </a>
@@ -25,6 +27,10 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Link className="brand" href="/">
               <span aria-hidden="true">◆</span> My Genshin Dashboard
             </Link>
+            <nav aria-label="Main navigation" className="main-nav">
+              <Link href="/">Profile</Link>
+              <Link href="/settings">Settings</Link>
+            </nav>
           </div>
         </header>
         <main className="shell" id="main" tabIndex={-1}>
