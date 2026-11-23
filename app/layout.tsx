@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { DashboardProvider } from "@/components/dashboard-state";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main className="shell" id="main" tabIndex={-1}>
-          {children}
+          <DashboardProvider>{children}</DashboardProvider>
         </main>
         <footer className="shell site-footer">
           Fan project. Genshin Impact assets belong to HoYoverse. This project
