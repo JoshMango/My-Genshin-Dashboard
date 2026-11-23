@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { saveJson } from "@/lib/browser-state";
 import { loadCatalog } from "@/lib/enka/catalog";
 import { normalizeProfile } from "@/lib/enka/normalize";
@@ -22,6 +22,7 @@ export function ProfileScreen() {
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState("");
   const [tab, setTab] = useState(0);
+  const goodTab = useRef<HTMLButtonElement>(null);
   const [element, setElement] = useState("");
   const [rarity, setRarity] = useState("");
   const [source, setSource] = useState("");
@@ -102,18 +103,59 @@ export function ProfileScreen() {
   }
 
   return (
-    <>
+    <div className="roster-home">
       <section className="hero panel profile-hero">
-        <div className="hero-orbit" aria-hidden="true">
-          <span>✦</span>
-        </div>
-        <div className="hero-content">
-          <h1>Character roster</h1>
+        <div className="hero-orbit" aria-hidden="true" />
+        <span className="roster-emblem" aria-hidden="true">
+          ✦
+        </span>
+        <h1>Character roster</h1>
+        {profile ? (
+          <div className="player-card">
+            {profile.namecard && (
+              <GameIcon src={profile.namecard} alt="" size={84} />
+            )}
+            <div>
+              <h2>{profile.nickname || `UID ${profile.uid}`}</h2>
+              <p className="muted">
+                {profile.rank !== undefined
+                  ? `Adventure Rank ${profile.rank} · `
+                  : ""}
+                UID {profile.uid}
+              </p>
+              {profile.signature && <p>{profile.signature}</p>}
+              {!profile.characters.length && (
+                <p className="muted">No public showcase builds</p>
+              )}
+            </div>
+          </div>
+        ) : (
           <p>Import your characters, find new teams, and compare builds.</p>
-        </div>
+        )}
+        {profile && (
+          <nav className="profile-links" aria-label="Profile links">
+            <a
+              className="button profile-link"
+              href={`https://akasha.cv/profile/${profile.uid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Leaderboards cover showcase characters only."
+            >
+              Leaderboards on Akasha.cv <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              className="button profile-link quiet"
+              href={`https://enka.network/u/${profile.uid}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Showcase on Enka.Network <span aria-hidden="true">↗</span>
+            </a>
+          </nav>
+        )}
       </section>
       <section
-        className="section-space panel stack"
+        className="section-space panel stack roster-import"
         aria-labelledby="import-heading"
       >
         <h2 id="import-heading">Add to roster</h2>
@@ -121,6 +163,7 @@ export function ProfileScreen() {
           {importTabs.map((label, index) => (
             <button
               key={label}
+              ref={index === 1 ? goodTab : undefined}
               type="button"
               aria-pressed={tab === index}
               className={tab === index ? "" : "quiet"}
@@ -153,9 +196,20 @@ export function ProfileScreen() {
             </form>
             <p className="muted" id="showcase-hint">
               Enable Show Character Details in your in-game Character Showcase.
-              Rotate characters into the showcase and reimport the same UID to
-              keep their builds together.
+              A UID import only includes characters in your showcase. Rotate
+              characters and reimport the same UID to keep their builds
+              together.
             </p>
+            <button
+              type="button"
+              className="quiet"
+              onClick={() => {
+                setTab(1);
+                goodTab.current?.focus();
+              }}
+            >
+              Learn how to import your full roster
+            </button>
             {failure && (
               <p className="error" role="alert">
                 {failure}
@@ -167,50 +221,6 @@ export function ProfileScreen() {
         {tab === 2 && <ManualBuild />}
       </section>
 
-      {profile && (
-        <section
-          className="section-space panel stack"
-          aria-label="Imported profile"
-        >
-          <div className="player-card">
-            {profile.namecard && (
-              <GameIcon src={profile.namecard} alt="" size={84} />
-            )}
-            <div>
-              <h2>{profile.nickname || `UID ${profile.uid}`}</h2>
-              <p className="muted">
-                {profile.rank !== undefined
-                  ? `Adventure Rank ${profile.rank} · `
-                  : ""}
-                UID {profile.uid}
-              </p>
-              {profile.signature && <p>{profile.signature}</p>}
-              {!profile.characters.length && (
-                <p className="muted">No public showcase builds</p>
-              )}
-            </div>
-          </div>
-          <nav className="input-row" aria-label="Profile links">
-            <a
-              className="button quiet"
-              href={`https://akasha.cv/profile/${profile.uid}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Leaderboards cover showcase characters only."
-            >
-              Leaderboards on Akasha.cv
-            </a>
-            <a
-              className="button quiet"
-              href={`https://enka.network/u/${profile.uid}/`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Showcase on Enka.Network
-            </a>
-          </nav>
-        </section>
-      )}
       <section
         className="section-space"
         aria-labelledby="roster-heading"
@@ -321,6 +331,6 @@ export function ProfileScreen() {
         </label>
         <p role="status">{backupNotice}</p>
       </details>
-    </>
+    </div>
   );
 }

@@ -71,16 +71,33 @@ export function InventoryImport() {
   }
 
   return (
-    <div>
-      <p className="muted">
-        Import characters, weapons, and artifacts from a scanner or Genshin
-        Optimizer.
-      </p>
+    <div className="stack good-import">
+      <div className="panel good-guide">
+        <h3>What is a GOOD file?</h3>
+        <p>
+          It’s a JSON export of your Genshin characters, weapons, and artifacts.
+          Import it to add characters outside your public showcase and use their
+          builds in Team Discovery and Compare. The file stays in your browser.
+        </p>
+        <h3>How to get one</h3>
+        <p>
+          Use a compatible scanner such as{" "}
+          <a
+            href="https://github.com/Andrewthe13th/Inventory_Kamera#how-to-run-inventory-kamera"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Inventory Kamera
+          </a>
+          . Scan Characters, Weapons, and Artifacts, then open its export folder
+          and select the exported file below.
+        </p>
+      </div>
       <label className="file-upload">
         Upload GOOD JSON{" "}
         <input
           type="file"
-          accept=".json,application/json"
+          accept=".json,.good,application/json"
           onChange={upload}
           disabled={busy}
         />
