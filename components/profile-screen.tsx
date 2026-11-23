@@ -35,6 +35,7 @@ export function ProfileScreen() {
   const [source, setSource] = useState("");
   const [needsBuild, setNeedsBuild] = useState(false);
   const [backupNotice, setBackupNotice] = useState("");
+  const leadArtwork = profile?.characters.find((character) => character.art);
   const visible = characters.filter(
     (character) =>
       (!element || character.element === element) &&
@@ -118,6 +119,14 @@ export function ProfileScreen() {
     <div className="roster-home">
       <section className="hero panel profile-hero">
         <div className="hero-orbit" aria-hidden="true" />
+        {leadArtwork && (
+          <GameIcon
+            src={leadArtwork.art}
+            alt=""
+            size={800}
+            className="hero-character"
+          />
+        )}
         <span className="roster-emblem" aria-hidden="true">
           ✦
         </span>

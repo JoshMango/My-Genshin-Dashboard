@@ -209,145 +209,151 @@ export function TeamBuilder() {
             </label>
           )}
         </div>
-        <div className="team-slots">
-          {draft.slots.map((character, index) => (
-            <div
-              className="team-slot"
-              key={index}
-              data-element={character?.element}
-            >
-              <button
-                className="quiet slot-button"
-                type="button"
-                aria-pressed={selected === index}
-                onClick={() => {
-                  setSelected(selected === index ? null : index);
-                  setSearch("");
-                }}
+        <div className="team-composition">
+          <div className="team-slots">
+            {draft.slots.map((character, index) => (
+              <div
+                className="team-slot"
+                key={index}
+                data-element={character?.element}
               >
-                <GameIcon src={character?.icon} alt="" size={70} />
-                <strong>{character?.name ?? `Choose slot ${index + 1}`}</strong>
-                {character && (
-                  <span className="muted">
-                    {character.source === "preview"
-                      ? "Not owned · Preview"
-                      : `Lv. ${character.level} · C${character.constellation}`}
-                  </span>
-                )}
-              </button>
-              {character && (
-                <div className="slot-actions">
-                  <button
-                    type="button"
-                    className="quiet compact"
-                    onClick={() => openCharacter(character, draft)}
-                    aria-label={`Inspect ${character.name}`}
-                  >
-                    Details
-                  </button>
-                  <ElementBadge element={character.element} />
-                  <button
-                    className="quiet compact"
-                    type="button"
-                    aria-label={`Remove ${character.name}`}
-                    onClick={() => setDraft(placeCharacter(draft, index, null))}
-                  >
-                    Remove
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        {selected !== null && (
-          <section
-            className="picker"
-            aria-label={`Choose character for slot ${selected + 1}`}
-          >
-            <h2>Choose character for slot {selected + 1}</h2>
-            <label className="field">
-              Search characters{" "}
-              <input
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-            </label>
-            {roster.length > 0 && (
-              <>
-                <h3>From your roster</h3>
-                <div className="picker-grid">
-                  {roster.map((entry) => (
-                    <button
-                      key={entry.id}
-                      type="button"
-                      className="quiet picker-card"
-                      onClick={() => choose(entry)}
-                    >
-                      <GameIcon src={entry.icon} alt="" size={40} />
-                      <span>
-                        {entry.name}
-                        <small>
-                          {entry.source === "preview"
-                            ? "Not owned · Manual preview"
-                            : characterRoles(entry)
-                                .map((role) => roles[role])
-                                .join(", ") || entry.element}
-                        </small>
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-            {failure && (
-              <p role="status">
-                {failure}{" "}
-                <button className="quiet" type="button" onClick={retry}>
-                  Retry
+                <button
+                  className="quiet slot-button"
+                  type="button"
+                  aria-pressed={selected === index}
+                  onClick={() => {
+                    setSelected(selected === index ? null : index);
+                    setSearch("");
+                  }}
+                >
+                  <GameIcon src={character?.icon} alt="" size={70} />
+                  <strong>
+                    {character?.name ?? `Choose slot ${index + 1}`}
+                  </strong>
+                  {character && (
+                    <span className="muted">
+                      {character.source === "preview"
+                        ? "Not owned · Preview"
+                        : `Lv. ${character.level} · C${character.constellation}`}
+                    </span>
+                  )}
                 </button>
-              </p>
-            )}
-            {!catalog && !failure && (
-              <p role="status">Loading character catalog…</p>
-            )}
-            {catalog && (
-              <>
-                <h3>Catalog previews</h3>
-                <p className="muted">
-                  Catalog characters outside your roster are treated as not
-                  owned. Import GOOD data or add an owned manual build to update
-                  ownership.
-                </p>
-                <div className="picker-grid picker-scroll">
-                  {candidates.map((entry) => (
+                {character && (
+                  <div className="slot-actions">
                     <button
-                      key={entry.id}
                       type="button"
-                      className="quiet picker-card"
+                      className="quiet compact"
+                      onClick={() => openCharacter(character, draft)}
+                      aria-label={`Inspect ${character.name}`}
+                    >
+                      Details
+                    </button>
+                    <ElementBadge element={character.element} />
+                    <button
+                      className="quiet compact"
+                      type="button"
+                      aria-label={`Remove ${character.name}`}
                       onClick={() =>
-                        choose(previewCharacter(entry.id, catalog))
+                        setDraft(placeCharacter(draft, index, null))
                       }
                     >
-                      <GameIcon src={entry.icon} alt="" size={40} />
-                      <span>
-                        {entry.label}
-                        <small>
-                          {ownedIds.has(entry.id) ? "Owned" : "Not owned"} ·{" "}
-                          {entry.element}
-                        </small>
-                      </span>
+                      Remove
                     </button>
-                  ))}
-                </div>
-                {!candidates.length && (
-                  <p className="muted">No matching catalog characters.</p>
+                  </div>
                 )}
-              </>
-            )}
-          </section>
-        )}
-        <TeamFeedback team={draft} />
+              </div>
+            ))}
+          </div>
+          {selected !== null && (
+            <section
+              className="picker"
+              aria-label={`Choose character for slot ${selected + 1}`}
+            >
+              <h2>Choose character for slot {selected + 1}</h2>
+              <label className="field">
+                Search characters{" "}
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+              </label>
+              {roster.length > 0 && (
+                <>
+                  <h3>From your roster</h3>
+                  <div className="picker-grid">
+                    {roster.map((entry) => (
+                      <button
+                        key={entry.id}
+                        type="button"
+                        className="quiet picker-card"
+                        onClick={() => choose(entry)}
+                      >
+                        <GameIcon src={entry.icon} alt="" size={40} />
+                        <span>
+                          {entry.name}
+                          <small>
+                            {entry.source === "preview"
+                              ? "Not owned · Manual preview"
+                              : characterRoles(entry)
+                                  .map((role) => roles[role])
+                                  .join(", ") || entry.element}
+                          </small>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+              {failure && (
+                <p role="status">
+                  {failure}{" "}
+                  <button className="quiet" type="button" onClick={retry}>
+                    Retry
+                  </button>
+                </p>
+              )}
+              {!catalog && !failure && (
+                <p role="status">Loading character catalog…</p>
+              )}
+              {catalog && (
+                <>
+                  <h3>Catalog previews</h3>
+                  <p className="muted">
+                    Catalog characters outside your roster are treated as not
+                    owned. Import GOOD data or add an owned manual build to
+                    update ownership.
+                  </p>
+                  <div className="picker-grid picker-scroll">
+                    {candidates.map((entry) => (
+                      <button
+                        key={entry.id}
+                        type="button"
+                        className="quiet picker-card"
+                        onClick={() =>
+                          choose(previewCharacter(entry.id, catalog))
+                        }
+                      >
+                        <GameIcon src={entry.icon} alt="" size={40} />
+                        <span>
+                          {entry.label}
+                          <small>
+                            {ownedIds.has(entry.id) ? "Owned" : "Not owned"} ·{" "}
+                            {entry.element}
+                          </small>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  {!candidates.length && (
+                    <p className="muted">No matching catalog characters.</p>
+                  )}
+                </>
+              )}
+            </section>
+          )}
+          <TeamFeedback team={draft} />
+        </div>
         <TeamRecommendations
           team={draft}
           catalog={catalog}

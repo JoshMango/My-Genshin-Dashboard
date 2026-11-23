@@ -70,6 +70,7 @@ export function WeaponCard({
       <button
         type="button"
         className="quiet weapon-trigger"
+        data-rarity={weapon.rarity}
         aria-expanded={open}
         aria-controls={panelId}
         onPointerEnter={(event) => {

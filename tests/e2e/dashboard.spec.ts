@@ -215,6 +215,14 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await expect(art).toHaveCSS("animation-name", "none");
   await page.emulateMedia({ reducedMotion: "no-preference" });
   const weapon = drawer.getByRole("button", { name: /Mistsplitter Reforged/ });
+  const weaponGlow = () =>
+    weapon.evaluate(
+      (element) => getComputedStyle(element, "::before").animationName,
+    );
+  await expect.poll(weaponGlow).toBe("weapon-gold-drift");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(weaponGlow).toBe("none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(
     weapon.getByRole("img", { name: "5-star rarity" }).locator("svg"),
   ).toHaveCount(5);

@@ -155,8 +155,8 @@ export function TeamDiscovery() {
 
   return (
     <>
+      <h1>Discover teams</h1>
       <section className="panel stack">
-        <h1>Discover teams</h1>
         <p className="muted">
           Search your full roster using the builds you imported. Scores estimate
           team fit and investment.
@@ -314,7 +314,10 @@ export function TeamDiscovery() {
               goal: result.goal,
             };
             return (
-              <article className="panel stack" key={entry.ids.join("-")}>
+              <article
+                className="panel stack discovery-result"
+                key={entry.ids.join("-")}
+              >
                 <div className="section-heading">
                   <strong>{entry.score}/100 estimated team fit</strong>
                   {entry.surprising && (

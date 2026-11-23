@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { ActionIcon } from "./action-icon";
 
 const pages = [
-  ["/", "Roster", "id"],
+  ["/", "Roster", "layers"],
   ["/teams", "Teams", "people"],
   ["/compare", "Compare", "compare"],
   ["/settings", "Settings", "settings"],
@@ -20,7 +20,12 @@ export function MainNav() {
         <Link
           key={url}
           href={url}
-          aria-current={pathname === url ? "page" : undefined}
+          aria-current={
+            pathname === url ||
+            (url === "/" && pathname.startsWith("/character/"))
+              ? "page"
+              : undefined
+          }
         >
           <ActionIcon name={icon} /> {name}
         </Link>

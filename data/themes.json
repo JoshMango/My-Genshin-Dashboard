@@ -54,13 +54,13 @@
     "line": "#a8838a"
   },
   "Dark": {
-    "page": "#101825",
-    "panel": "#192536",
-    "deep": "#131e2d",
-    "glow": "#3f5068",
-    "ink": "#f6ebd6",
-    "muted": "#b8c4d5",
-    "line": "#69778b"
+    "page": "#101d23",
+    "panel": "#1a2a31",
+    "deep": "#122229",
+    "glow": "#2d4b4e",
+    "ink": "#f5ebd5",
+    "muted": "#b9c9cb",
+    "line": "#657c82"
   },
   "Light": {
     "page": "#f1e9d9",
