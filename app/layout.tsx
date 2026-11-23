@@ -39,8 +39,14 @@ export default function Layout({ children }: { children: ReactNode }) {
           <DashboardProvider>{children}</DashboardProvider>
         </main>
         <footer className="shell site-footer">
-          Fan project. Genshin Impact assets belong to HoYoverse. This project
-          is unaffiliated with and unendorsed by HoYoverse.
+          <p>
+            Fan project. Genshin Impact assets belong to HoYoverse. This project
+            is unaffiliated with and unendorsed by HoYoverse.
+          </p>
+          <nav aria-label="Project information" className="main-nav">
+            <Link href="/about">About</Link>
+            <Link href="/privacy">Privacy</Link>
+          </nav>
         </footer>
       </body>
     </html>

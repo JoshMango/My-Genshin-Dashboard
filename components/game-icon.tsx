@@ -4,6 +4,9 @@ import Image from "next/image";
 import { useState } from "react";
 import type { Element } from "@/lib/model";
 
+const elementAssets =
+  "https://raw.githubusercontent.com/MadeBaruna/paimon-moe/4b873a6decad0384665084c69e9927a9fa266555/static/images/elements/";
+
 export function GameIcon({
   src,
   alt,
@@ -19,8 +22,14 @@ export function GameIcon({
 }) {
   const [failed, setFailed] = useState<string>();
   const allowed =
-    src &&
-    /^https:\/\/enka\.network\/ui\/[A-Za-z0-9_]+\.(png|jpg|webp)$/i.test(src);
+    typeof src === "string" &&
+    (/^https:\/\/enka\.network\/ui\/[A-Za-z0-9_]+\.(png|jpg|webp)$/i.test(
+      src,
+    ) ||
+      (src.startsWith(elementAssets) &&
+        /^(pyro|hydro|electro|cryo|dendro|anemo|geo)\.png$/.test(
+          src.slice(elementAssets.length),
+        )));
   return allowed && src !== failed ? (
     <Image
       src={src}
@@ -45,21 +54,16 @@ export function GameIcon({
   );
 }
 
-const marks: Record<Element, string> = {
-  Pyro: "♨",
-  Hydro: "◈",
-  Electro: "ϟ",
-  Cryo: "❄",
-  Dendro: "✿",
-  Anemo: "꩜",
-  Geo: "❖",
-};
-
 export function ElementBadge({ element }: { element?: Element }) {
   if (!element) return null;
   return (
     <span className="element-badge" data-element={element}>
-      <span aria-hidden="true">{marks[element]}</span> {element}
+      <GameIcon
+        src={`${elementAssets}${element.toLowerCase()}.png`}
+        alt=""
+        size={20}
+      />{" "}
+      {element}
     </span>
   );
 }

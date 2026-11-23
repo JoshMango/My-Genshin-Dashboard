@@ -54,6 +54,13 @@ export function ProfileScreen() {
         <div className="hero-orbit" aria-hidden="true">
           <span>✦</span>
         </div>
+        <GameIcon
+          className="hero-character"
+          src="https://enka.network/ui/UI_Gacha_AvatarImg_Yelan.png"
+          size={640}
+          alt=""
+          eager
+        />
         <div className="hero-content">
           <h1>
             My Genshin
