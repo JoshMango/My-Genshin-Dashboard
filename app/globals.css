@@ -1173,3 +1173,14 @@ a:not(.brand):not(.character-link):not(.button) {
     font-size: 0.86rem;
   }
 }
+.team-tabs {
+  margin-bottom: 1rem;
+}
+.discovery-lineup {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 0.45rem;
+}
+.discovery-lineup button {
+  min-width: 0;
+}

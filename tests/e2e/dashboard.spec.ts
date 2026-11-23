@@ -18,6 +18,9 @@ const data: Record<string, unknown> = {
     ...avatar(10000002, "Ice", 1, "Ayaka"),
     ...avatar(10000003, "Wind", 2, "Qin"),
     ...avatar(10000032, "Fire", 3, "Bennett"),
+    ...avatar(10000073, "Grass", 6, "Nahida"),
+    ...avatar(10000025, "Water", 7, "Xingqiu"),
+    ...avatar(10000065, "Electric", 8, "Shinobu"),
   },
   "weapons.json": {},
   "relics.json": {
@@ -38,6 +41,9 @@ const data: Record<string, unknown> = {
       "3": "Bennett",
       "4": "Blizzard Strayer",
       "5": "Snowswept Memory",
+      "6": "Nahida",
+      "7": "Xingqiu",
+      "8": "Kuki Shinobu",
     },
   },
   "namecards.json": {},
@@ -359,4 +365,68 @@ test("keeps shared page content inside the device with landscape gutters", async
       }
     }
   }
+});
+
+test("discovers a Hyperbloom team from the owned roster and sends it to Compare", async ({
+  page,
+}) => {
+  await stubCatalog(page);
+  await page.route("**/api/enka/618285856", (route) =>
+    route.fulfill({
+      json: {
+        playerInfo: { nickname: "Discovery example" },
+        avatarInfoList: [10000073, 10000025, 10000065, 10000032].map(
+          (avatarId) => ({
+            avatarId,
+            propMap: { "4001": { val: "90" } },
+            fightPropMap: { "2001": 1600, "28": 150 },
+          }),
+        ),
+      },
+    }),
+  );
+  await page.goto("/");
+  await page.getByLabel("Genshin UID").fill("618285856");
+  await page.getByRole("button", { name: "Import showcase" }).click();
+  await expect(
+    page.getByRole("link", { name: "Leaderboards on Akasha.cv" }),
+  ).toHaveAttribute("href", "https://akasha.cv/profile/618285856");
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: /Nahida.*Showcase/ }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Teams", exact: true }).click();
+  await page.getByRole("link", { name: "Discover", exact: true }).click();
+  await expect(
+    page
+      .getByRole("combobox", { name: "Must include" })
+      .locator('option[value="10000065"]'),
+  ).toHaveCount(1);
+  await page
+    .getByRole("combobox", { name: "Playstyle" })
+    .selectOption("Reaction team");
+  await page
+    .getByRole("combobox", { name: "Reaction", exact: true })
+    .selectOption("Hyperbloom");
+  await page
+    .getByRole("combobox", { name: "Must include" })
+    .selectOption("10000065");
+  await page.getByRole("button", { name: "Find teams" }).click();
+  await expect(
+    page.getByText("1 valid combinations scored.", { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Supports Hyperbloom", { exact: false }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Save team" }).click();
+  await expect(
+    page.getByRole("status").filter({ hasText: "Saved Nahida" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Simulate", exact: true }).click();
+  await expect(page).toHaveURL(/\/compare$/);
+  await expect(
+    page
+      .getByRole("progressbar", { name: "Kuki Shinobu damage share" })
+      .first(),
+  ).toBeVisible();
 });
