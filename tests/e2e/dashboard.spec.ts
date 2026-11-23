@@ -151,6 +151,17 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await expect(
     links.getByRole("link", { name: "View public characters on Enka" }),
   ).toHaveAttribute("href", "https://enka.network/u/618285856/");
+  if (
+    await page.evaluate(
+      () => matchMedia("(hover: hover) and (pointer: fine)").matches,
+    )
+  ) {
+    const enka = links.getByRole("link", {
+      name: "View public characters on Enka",
+    });
+    await enka.hover();
+    await expect(enka).toHaveCSS("translate", "0px -3px");
+  }
   await page.getByRole("button", { name: /Kamisato Ayaka/ }).click();
   await expect(
     page
@@ -230,6 +241,14 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
     }),
   );
   await page.goto("/");
+  const ripple = () =>
+    page
+      .locator(".hero-orbit")
+      .evaluate((orbit) => getComputedStyle(orbit, "::before").animationName);
+  await expect.poll(ripple).toBe("roster-ripple");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(ripple).toBe("none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.keyboard.press("Tab");
   await expect(
     page.getByRole("link", { name: "Skip to content" }),
@@ -252,6 +271,8 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(await page.evaluate(() => window.innerWidth));
+  await page.getByRole("link", { name: "Roster", exact: true }).click();
+  await expect.poll(ripple).toBe("none");
 });
 
 function sampleGlb() {

@@ -1297,6 +1297,145 @@ a:not(.brand):not(.character-link):not(.button) {
 .roster-home .source-badge {
   margin-inline: auto;
 }
+.roster-home .character-card:focus-within {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.roster-uid:focus-within {
+  box-shadow: 0 0 1.65rem
+    color-mix(in srgb, var(--control-accent) 33%, transparent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .roster-home :is(button, .button):not(:disabled):hover {
+    border-color: var(--accent);
+    box-shadow: 0 0.35rem 1rem
+      color-mix(in srgb, var(--accent) 23%, transparent);
+  }
+  .roster-home .character-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0.6rem 1.45rem
+      color-mix(in srgb, var(--element-bright, var(--accent)) 23%, transparent);
+  }
+  .roster-home .character-card .character-link:hover {
+    filter: none;
+    box-shadow: none;
+  }
+  .roster-home :is(input, select, textarea):not(:disabled):hover {
+    border-color: var(--accent);
+  }
+  .roster-home summary:hover {
+    color: var(--accent);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-motion="on"] .hero-orbit::before,
+  :root[data-motion="on"] .hero-orbit::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-radial-gradient(
+      circle at 50% 16%,
+      transparent 0 4.2rem,
+      color-mix(in srgb, var(--accent) 32%, transparent) 4.2rem
+        calc(4.2rem + 1px),
+      transparent calc(4.2rem + 1px) 5.6rem
+    );
+    transform-origin: 50% 16%;
+    animation: roster-ripple 11s linear infinite;
+  }
+  :root[data-motion="on"] .hero-orbit::after {
+    animation-delay: -5.5s;
+  }
+  :root[data-motion="on"] .roster-emblem {
+    animation: roster-emblem-float 5s ease-in-out infinite alternate;
+  }
+  :root[data-motion="on"] .profile-links {
+    animation: profile-links-appear 400ms ease-out;
+  }
+  :root[data-motion="on"]
+    .roster-home
+    :is(
+      button,
+      .button,
+      .character-card,
+      input,
+      select,
+      textarea,
+      summary,
+      .roster-uid
+    ) {
+    transition:
+      translate 180ms ease-out,
+      scale 150ms ease-out,
+      box-shadow 200ms ease-out,
+      border-color 180ms ease-out,
+      filter 180ms ease-out,
+      color 180ms ease-out;
+  }
+  :root[data-motion="on"]
+    .roster-home
+    :is(.character-art > img, .profile-link > .action-icon:last-child) {
+    transition:
+      scale 220ms ease-out,
+      translate 180ms ease-out;
+  }
+  :root[data-motion="on"]
+    .roster-home
+    :is(button, .button):not(:disabled):active {
+    scale: 0.97;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  :root[data-motion="on"]
+    .roster-home
+    :is(button:not(.character-link), .button):not(:disabled):hover {
+    translate: 0 -3px;
+  }
+  :root[data-motion="on"] .roster-home .character-card:hover {
+    translate: 0 -5px;
+  }
+  :root[data-motion="on"]
+    .roster-home
+    .character-card:hover
+    .character-art
+    > img {
+    scale: 1.08;
+  }
+  :root[data-motion="on"] .profile-link:hover > .action-icon:last-child {
+    translate: 2px -2px;
+  }
+}
+@keyframes roster-ripple {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  25%,
+  65% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.46);
+  }
+}
+@keyframes roster-emblem-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-0.35rem);
+  }
+}
+@keyframes profile-links-appear {
+  from {
+    opacity: 0;
+    transform: translateY(0.3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .character-drawer {
   position: fixed;
   inset: 0 0 0 auto;
