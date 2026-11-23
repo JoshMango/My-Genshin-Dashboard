@@ -3,7 +3,10 @@ import { showcase, validUid } from "@/lib/enka/proxy";
 import { normalizeProfile } from "@/lib/enka/normalize";
 import type { Catalog } from "@/lib/enka/catalog";
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
 
 it("accepts 9- or 10-digit UIDs and rejects paths, leading zeroes, and other lengths", () => {
   expect(validUid("612345678")).toBe(true);

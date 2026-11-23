@@ -30,6 +30,7 @@ async function redis<T>(command: (string | number)[]): Promise<T> {
     },
     body: JSON.stringify(command),
     cache: "no-store",
+    redirect: "error",
     signal: AbortSignal.timeout(2500),
   });
   if (!response.ok) throw new Error("Redis is unavailable.");
