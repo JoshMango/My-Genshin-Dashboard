@@ -46,12 +46,17 @@ const data: Record<string, unknown> = {
       "8": "Kuki Shinobu",
       "9": "Favonius Sword",
       "10": "Favonius Codex",
+      "11": "Mistsplitter Reforged",
     },
   },
   "namecards.json": {},
   "affixes.json": {},
   "curves.json": {},
   "relic_levels.json": {},
+  "mistsplitterreforged.json": {
+    effectName: "Mistsplitter's Edge",
+    r1: { description: "Gain a 12% Elemental DMG Bonus." },
+  },
 };
 
 async function stubCatalog(page: Page) {
@@ -97,6 +102,19 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
             skillLevelMap: { "11": 8, "12": 8, "13": 9 },
             equipList: [
               {
+                itemId: 11509,
+                weapon: {
+                  level: 90,
+                  promoteLevel: 6,
+                  affixMap: { "111509": 0 },
+                },
+                flat: {
+                  nameTextMapHash: "11",
+                  rankLevel: 5,
+                  icon: "UI_EquipIcon_Sword_Narukami",
+                },
+              },
+              {
                 itemId: 1,
                 reliquary: { level: 21 },
                 flat: {
@@ -128,9 +146,10 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await page.goto("/");
   const links = page.getByRole("navigation", { name: "Profile links" });
   await expect(links).toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Learn how to import your full roster" })
-    .click();
+  const goodTip = page.getByRole("complementary", { name: "GOOD import tip" });
+  await expect(goodTip).toBeVisible();
+  await goodTip.getByRole("button", { name: "Open GOOD import" }).click();
+  await expect(goodTip).toHaveCount(0);
   await expect(
     page.getByRole("heading", { name: "What is a GOOD file?" }),
   ).toBeVisible();
@@ -192,6 +211,29 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(art).toHaveCSS("animation-name", "none");
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  const weapon = drawer.getByRole("button", { name: /Mistsplitter Reforged/ });
+  await expect(
+    weapon.getByRole("img", { name: "5-star rarity" }).locator("svg"),
+  ).toHaveCount(5);
+  await expect(weapon.locator("img")).toHaveAttribute(
+    "src",
+    /UI_EquipIcon_Sword_Narukami\.png$/,
+  );
+  const passive = drawer.getByText("Gain a 12% Elemental DMG Bonus.");
+  await expect(passive).toBeHidden();
+  if (
+    await page.evaluate(
+      () => matchMedia("(hover: hover) and (pointer: fine)").matches,
+    )
+  ) {
+    await weapon.hover();
+  } else {
+    await weapon.tap();
+  }
+  await expect(passive).toBeVisible();
+  await weapon.press("Escape");
+  await expect(passive).toBeHidden();
+  await expect(drawer).toBeVisible();
   await expect(page.locator(".combat-stat[data-essential] dt")).toHaveText([
     "ATKEssential",
     "CRIT RateEssential",
@@ -207,6 +249,9 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
     .filter({ has: page.getByRole("heading", { name: "Flower" }) });
   await expect(flower.getByText("Snowswept Memory")).toBeVisible();
   await expect(flower.getByText("9.3%")).toBeVisible();
+  await expect(
+    flower.getByRole("img", { name: "5-star rarity" }).locator("svg"),
+  ).toHaveCount(5);
   await expect(flower.locator("img")).toHaveAttribute(
     "src",
     /UI_RelicIcon_14001_4/,

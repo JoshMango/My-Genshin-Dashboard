@@ -1,5 +1,6 @@
 import { formatStat, statLabels, type Artifact, type Slot } from "@/lib/model";
 import { GameIcon } from "./game-icon";
+import { RarityStars } from "./rarity-stars";
 
 export function ArtifactSlot({
   slot,
@@ -13,7 +14,10 @@ export function ArtifactSlot({
   return (
     <article className="gear-card" data-rarity={artifact?.rarity}>
       <div className="item-heading">
-        <GameIcon src={artifact?.icon} alt="" size={56} />
+        <span className="equipment-art">
+          <GameIcon src={artifact?.icon} alt="" size={56} />
+          {artifact && <RarityStars rarity={artifact.rarity} />}
+        </span>
         <div>
           <h3>{slot}</h3>
           {(artifact?.name || name) && (
@@ -21,7 +25,7 @@ export function ArtifactSlot({
           )}
           <p className="muted">
             {artifact
-              ? `${artifact.setName} · ${artifact.rarity}★ · +${artifact.level}`
+              ? `${artifact.setName} · +${artifact.level}`
               : "Empty slot"}
           </p>
         </div>

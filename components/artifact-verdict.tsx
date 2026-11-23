@@ -11,6 +11,7 @@ import {
 import { roles, type Team } from "@/lib/teams";
 import { useDashboard } from "./dashboard-state";
 import { GameIcon } from "./game-icon";
+import { RarityStars } from "./rarity-stars";
 import { useCatalog } from "./use-catalog";
 
 export function ArtifactVerdict({
@@ -138,7 +139,10 @@ export function ArtifactVerdict({
             );
             return (
               <div className="verdict-row" key={artifact.id}>
-                <GameIcon src={artifact.icon} alt="" size={35} />
+                <span className="equipment-art">
+                  <GameIcon src={artifact.icon} alt="" size={35} />
+                  <RarityStars rarity={artifact.rarity} />
+                </span>
                 <span>
                   <strong>{artifact.name ?? artifact.slot}</strong>
                   <small className="muted">
@@ -158,7 +162,10 @@ export function ArtifactVerdict({
         {upgrades.length ? (
           upgrades.map(({ artifact, delta }) => (
             <div className="verdict-row" key={artifact.id}>
-              <GameIcon src={artifact.icon} alt="" size={35} />
+              <span className="equipment-art">
+                <GameIcon src={artifact.icon} alt="" size={35} />
+                <RarityStars rarity={artifact.rarity} />
+              </span>
               <span>
                 <strong>
                   {artifact.name ?? artifact.slot} · {artifact.setName}

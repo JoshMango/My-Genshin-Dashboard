@@ -11,6 +11,7 @@ import { ActionIcon } from "./action-icon";
 import { CharacterCard } from "./character-card";
 import { useDashboard } from "./dashboard-state";
 import { GameIcon } from "./game-icon";
+import { GoodImportTip } from "./good-import-tip";
 import { InventoryImport } from "./inventory-import";
 import { ManualBuild } from "./manual-build";
 
@@ -43,6 +44,11 @@ export function ProfileScreen() {
           : character.source === source)) &&
       (!needsBuild || !character.weapon || character.artifacts.length < 5),
   );
+
+  function openGoodGuide() {
+    setTab(1);
+    goodTab.current?.focus();
+  }
 
   async function lookup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -216,14 +222,7 @@ export function ProfileScreen() {
               characters and reimport the same UID to keep their builds
               together.
             </p>
-            <button
-              type="button"
-              className="quiet"
-              onClick={() => {
-                setTab(1);
-                goodTab.current?.focus();
-              }}
-            >
+            <button type="button" className="quiet" onClick={openGoodGuide}>
               <ActionIcon name="info" /> Learn how to import your full roster
             </button>
             {failure && (
@@ -359,6 +358,7 @@ export function ProfileScreen() {
         </label>
         <p role="status">{backupNotice}</p>
       </details>
+      <GoodImportTip openGuide={openGoodGuide} />
     </div>
   );
 }

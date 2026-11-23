@@ -124,13 +124,15 @@ function Drawer({
         )}
         <div className="drawer-layout">
           <div className="drawer-art" data-rarity={character.rarity}>
-            <GameIcon
-              src={character.art}
-              fallbackSrc={character.icon}
-              alt={`${character.name} splash art`}
-              size={900}
-              eager
-            />
+            <div className="splash-art-image">
+              <GameIcon
+                src={character.art}
+                fallbackSrc={character.icon}
+                alt={`${character.name} splash art`}
+                size={900}
+                eager
+              />
+            </div>
           </div>
           <CharacterDetails character={variant} team={team} compact />
         </div>
