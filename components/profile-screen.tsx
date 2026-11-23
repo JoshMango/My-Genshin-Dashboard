@@ -206,7 +206,7 @@ export function ProfileScreen() {
                 />
                 <button type="submit" disabled={pending}>
                   <ActionIcon name="search" />
-                  {pending ? "Importing…" : "Import showcase"}
+                  {pending ? "Searching…" : "Search Account"}
                 </button>
               </div>
             </form>

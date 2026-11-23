@@ -1440,7 +1440,7 @@ a:not(.brand):not(.character-link):not(.button) {
   position: fixed;
   inset: 0 0 0 auto;
   margin: 0;
-  width: min(100%, 48rem);
+  width: min(100%, 76rem);
   max-width: none;
   height: 100dvh;
   max-height: none;
@@ -1465,6 +1465,147 @@ a:not(.brand):not(.character-link):not(.button) {
   padding-block: 0.5rem;
   background: var(--page);
   margin-bottom: 0.65rem;
+}
+.drawer-layout {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+.drawer-layout > .character-detail {
+  min-width: 0;
+  margin-top: 0;
+}
+.drawer-art {
+  --rarity-glow: var(--accent);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: clamp(11rem, 49vw, 18rem);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--rarity-glow) 55%, var(--line));
+  border-radius: var(--radius);
+  background: radial-gradient(
+    ellipse at 50% 64%,
+    color-mix(in srgb, var(--rarity-glow) 21%, var(--panel-deep)),
+    var(--panel-deep) 75%
+  );
+}
+.drawer-art[data-rarity="5"] {
+  --rarity-glow: #ffcc72;
+}
+.drawer-art[data-rarity="4"] {
+  --rarity-glow: #c08bfc;
+}
+.drawer-art::before,
+.drawer-art::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+.drawer-art::before {
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 63%,
+    color-mix(in srgb, var(--rarity-glow) 44%, transparent),
+    transparent 64%
+  );
+}
+.drawer-art::after {
+  width: min(63%, 21rem);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--rarity-glow) 42%, transparent);
+  border-radius: 50%;
+  outline: 1px solid color-mix(in srgb, var(--rarity-glow) 22%, transparent);
+  outline-offset: 0.65rem;
+}
+.drawer-art > img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  filter: drop-shadow(
+    0 0 0.8rem color-mix(in srgb, var(--rarity-glow) 46%, transparent)
+  );
+}
+.drawer-art > .icon-placeholder {
+  max-width: 5rem;
+  max-height: 5rem;
+}
+@media (min-width: 50rem) {
+  .drawer-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+  .drawer-art {
+    position: sticky;
+    top: 4.5rem;
+    height: clamp(15rem, 68dvh, 37rem);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-motion="on"] .character-drawer[open] {
+    animation: character-drawer-enter 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  :root[data-motion="on"] .character-drawer[open]::backdrop {
+    animation: character-art-enter 270ms ease-out;
+  }
+  :root[data-motion="on"] .drawer-art {
+    animation: character-art-enter 450ms ease-out;
+  }
+  :root[data-motion="on"] .drawer-art > img {
+    animation: character-art-float 4.8s ease-in-out infinite alternate;
+    transition:
+      scale 300ms ease-out,
+      filter 300ms ease-out;
+  }
+  :root[data-motion="on"] .drawer-art::before {
+    animation: character-art-glow 4.8s ease-in-out infinite alternate;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  :root[data-motion="on"] .drawer-art:hover > img {
+    scale: 1.045;
+    filter: drop-shadow(
+      0 0 1.25rem color-mix(in srgb, var(--rarity-glow) 64%, transparent)
+    );
+  }
+}
+@keyframes character-drawer-enter {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes character-art-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes character-art-float {
+  from {
+    transform: translateY(0.2rem) rotate(-0.5deg);
+  }
+  to {
+    transform: translateY(-0.45rem) rotate(0.5deg);
+  }
+}
+@keyframes character-art-glow {
+  from {
+    opacity: 0.55;
+    transform: translate(-4%, 3%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate(4%, -3%) scale(1.12);
+  }
 }
 @media (max-width: 42rem) {
   body {

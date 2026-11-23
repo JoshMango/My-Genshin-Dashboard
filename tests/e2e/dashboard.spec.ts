@@ -142,7 +142,7 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   ).toBeFocused();
   await page.getByRole("button", { name: "Enka UID" }).click();
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(page.getByText("Traveler Example")).toBeVisible();
   await expect(page.getByText("Bio: See you in Teyvat.")).toBeVisible();
   await expect(
@@ -168,9 +168,30 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
       .getByRole("dialog", { name: /Kamisato Ayaka/ })
       .getByRole("heading", { name: "Kamisato Ayaka" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("dialog", { name: /Kamisato Ayaka/ }),
-  ).toBeVisible();
+  const drawer = page.getByRole("dialog", { name: /Kamisato Ayaka/ });
+  await expect(drawer).toBeVisible();
+  const art = drawer.getByRole("img", { name: "Kamisato Ayaka splash art" });
+  await expect(art).toHaveAttribute("src", /UI_Gacha_AvatarImg_Ayaka\.png$/);
+  await expect(drawer.locator(".drawer-art")).toHaveAttribute(
+    "data-rarity",
+    "5",
+  );
+  expect(
+    await drawer.evaluate((element) => {
+      const art = element.querySelector(".drawer-art")?.getBoundingClientRect();
+      const details = element
+        .querySelector('[role="tablist"]')
+        ?.getBoundingClientRect();
+      if (!art || !details) return false;
+      return matchMedia("(min-width: 50rem)").matches
+        ? art.right < details.left
+        : art.bottom < details.top;
+    }),
+  ).toBe(true);
+  await expect(art).toHaveCSS("animation-name", "character-art-float");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(art).toHaveCSS("animation-name", "none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(page.locator(".combat-stat[data-essential] dt")).toHaveText([
     "ATKEssential",
     "CRIT RateEssential",
@@ -254,10 +275,10 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
     page.getByRole("link", { name: "Skip to content" }),
   ).toBeFocused();
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(page.getByText("No public showcase builds")).toBeVisible();
   await page.getByLabel("Genshin UID").fill("618285857");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(
     page.getByRole("alert").filter({ hasText: "Enka is busy" }),
   ).toBeVisible();
@@ -326,7 +347,7 @@ test("opens, remembers, and removes a character's local 3D model", async ({
   );
   await page.goto("/");
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await page.getByRole("button", { name: /Kamisato Ayaka/ }).waitFor();
   await page.goto("/character/10000002");
   await page.getByLabel("Load 3D model").setInputFiles({
@@ -446,7 +467,7 @@ test("discovers a Hyperbloom team from the owned roster and sends it to Compare"
   );
   await page.goto("/");
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(
     page.getByRole("link", { name: "Leaderboards on Akasha.cv" }),
   ).toHaveAttribute("href", "https://akasha.cv/profile/618285856");
