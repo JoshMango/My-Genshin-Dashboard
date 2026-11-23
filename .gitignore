@@ -9,3 +9,4 @@ test-results/
 .vercel/
 .npm-cache/
 .pnpm-store/
+.playwright-browsers/

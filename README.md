@@ -22,3 +22,5 @@ Use Node.js 22 or 24 and pnpm. Run `pnpm install --frozen-lockfile`, then `pnpm 
 - [Vitest](https://nextjs.org/docs/app/guides/testing/vitest) and [Playwright](https://playwright.dev/docs/intro)
 
 This fan project is unaffiliated with and unendorsed by HoYoverse. Genshin Impact assets belong to HoYoverse.
+
+Supplemental English descriptions are loaded on demand from [genshin-db](https://github.com/theBowja/genshin-db). Artwork and icons are served by Enka.Network.
