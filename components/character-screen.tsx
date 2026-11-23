@@ -11,6 +11,7 @@ import {
   type StatKey,
 } from "@/lib/model";
 import { ArtifactSlot } from "./artifact-slot";
+import { ArtifactVerdict } from "./artifact-verdict";
 import { useDashboard } from "./dashboard-state";
 import { ElementBadge, GameIcon } from "./game-icon";
 
@@ -251,6 +252,9 @@ function CharacterDetails({ character }: { character: Character }) {
                 ))}
               </div>
             </>
+          )}
+          {(tab === 0 || tab === 1) && (
+            <ArtifactVerdict character={character} />
           )}
           {tab === 2 && (
             <>

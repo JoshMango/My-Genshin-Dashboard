@@ -809,3 +809,36 @@ input[type="checkbox"] {
   border-top: 1px solid var(--line);
   padding-top: 1rem;
 }
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  gap: 0.4rem;
+}
+.chip-list li {
+  border: 1px solid var(--line);
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+.recommend-stat {
+  display: grid;
+  grid-template-columns: 6.4rem 1fr;
+  border-bottom: 1px solid color-mix(in srgb, var(--line), transparent 50%);
+  padding: 0.25rem 0;
+}
+.recommend-stat dd {
+  margin: 0;
+}
+.verdict-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--line), transparent 50%);
+  padding: 0.35rem 0;
+}
+.verdict-row small {
+  display: block;
+}
