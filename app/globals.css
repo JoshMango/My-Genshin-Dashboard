@@ -1098,3 +1098,14 @@ a:not(.brand):not(.character-link):not(.button) {
 .verdict-row > img {
   height: auto;
 }
+.roster-filters {
+  margin-bottom: 1rem;
+}
+.character-caption .source-badge {
+  display: table;
+  margin-top: 0.25rem;
+  color: var(--ink);
+  background: var(--panel-deep);
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.35rem;
+}

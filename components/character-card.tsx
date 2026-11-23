@@ -18,7 +18,13 @@ export function CharacterCard({ character }: { character: Character }) {
           <h3>{character.name}</h3>
           <span>
             Lv. {character.level} · C{character.constellation}
-            {character.source === "preview" && " · Not owned"}
+          </span>
+          <span className="source-badge">
+            {character.source === "showcase"
+              ? "Showcase"
+              : character.source === "preview"
+                ? "Not owned"
+                : "Imported"}
           </span>
         </div>
       </Link>
