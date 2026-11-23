@@ -4,6 +4,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { saveJson } from "@/lib/browser-state";
 import { loadCatalog } from "@/lib/enka/catalog";
 import { normalizeGood, parseGood } from "@/lib/good";
+import { ActionIcon } from "./action-icon";
 import { useDashboard } from "./dashboard-state";
 
 export function InventoryImport() {
@@ -86,15 +87,18 @@ export function InventoryImport() {
             href="https://github.com/Andrewthe13th/Inventory_Kamera#how-to-run-inventory-kamera"
             target="_blank"
             rel="noopener noreferrer"
+            className="control-label"
           >
-            Inventory Kamera
+            Inventory Kamera <ActionIcon name="external" />
           </a>
           . Scan Characters, Weapons, and Artifacts, then open its export folder
           and select the exported file below.
         </p>
       </div>
       <label className="file-upload">
-        Upload GOOD JSON{" "}
+        <span className="control-label">
+          <ActionIcon name="upload" /> Upload GOOD JSON
+        </span>
         <input
           type="file"
           accept=".json,.good,application/json"
@@ -104,7 +108,9 @@ export function InventoryImport() {
       </label>
       <form onSubmit={paste} className="stack">
         <label className="field">
-          Paste GOOD JSON
+          <span className="control-label">
+            <ActionIcon name="clipboard" /> Paste GOOD JSON
+          </span>
           <textarea
             rows={4}
             value={json}
@@ -114,7 +120,7 @@ export function InventoryImport() {
         </label>
         <div className="input-row">
           <button disabled={busy || !json.trim()}>
-            {busy ? "Importing…" : "Import JSON"}
+            <ActionIcon name="upload" /> {busy ? "Importing…" : "Import JSON"}
           </button>
           {good && (
             <button
@@ -122,7 +128,7 @@ export function InventoryImport() {
               className="quiet"
               onClick={() => saveJson("genshin-inventory.good.json", good)}
             >
-              Export GOOD
+              <ActionIcon name="download" /> Export GOOD
             </button>
           )}
         </div>

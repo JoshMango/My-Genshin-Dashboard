@@ -84,7 +84,11 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
     route.fulfill({
       json: {
         ttl: 60,
-        playerInfo: { nickname: "Traveler Example", level: 60 },
+        playerInfo: {
+          nickname: "Traveler Example",
+          level: 60,
+          signature: "See you in Teyvat.",
+        },
         avatarInfoList: [
           {
             avatarId: 10000002,
@@ -140,11 +144,12 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await page.getByLabel("Genshin UID").fill("618285856");
   await page.getByRole("button", { name: "Import showcase" }).click();
   await expect(page.getByText("Traveler Example")).toBeVisible();
+  await expect(page.getByText("Bio: See you in Teyvat.")).toBeVisible();
   await expect(
     links.getByRole("link", { name: "Leaderboards on Akasha.cv" }),
   ).toHaveAttribute("href", "https://akasha.cv/profile/618285856");
   await expect(
-    links.getByRole("link", { name: "Showcase on Enka.Network" }),
+    links.getByRole("link", { name: "View public characters on Enka" }),
   ).toHaveAttribute("href", "https://enka.network/u/618285856/");
   await page.getByRole("button", { name: /Kamisato Ayaka/ }).click();
   await expect(
