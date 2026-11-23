@@ -1477,12 +1477,13 @@ a:not(.brand):not(.character-link):not(.button) {
 }
 .drawer-art {
   --rarity-glow: var(--accent);
+  --art-scale: 1.14;
   position: relative;
   isolation: isolate;
   display: grid;
   place-items: center;
   min-width: 0;
-  height: clamp(11rem, 49vw, 18rem);
+  height: clamp(12rem, 57vw, 20rem);
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--rarity-glow) 55%, var(--line));
   border-radius: var(--radius);
@@ -1526,6 +1527,7 @@ a:not(.brand):not(.character-link):not(.button) {
   height: 100%;
   min-height: 0;
   object-fit: contain;
+  scale: var(--art-scale);
   filter: drop-shadow(
     0 0 0.8rem color-mix(in srgb, var(--rarity-glow) 46%, transparent)
   );
@@ -1536,10 +1538,11 @@ a:not(.brand):not(.character-link):not(.button) {
 }
 @media (min-width: 50rem) {
   .drawer-layout {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
   .drawer-art {
+    --art-scale: 1.25;
     position: sticky;
     top: 4.5rem;
     height: clamp(15rem, 68dvh, 37rem);
@@ -1567,7 +1570,7 @@ a:not(.brand):not(.character-link):not(.button) {
 }
 @media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
   :root[data-motion="on"] .drawer-art:hover > img {
-    scale: 1.045;
+    scale: calc(var(--art-scale) * 1.045);
     filter: drop-shadow(
       0 0 1.25rem color-mix(in srgb, var(--rarity-glow) 64%, transparent)
     );
