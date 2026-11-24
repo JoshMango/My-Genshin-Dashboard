@@ -1,0 +1,74 @@
+{
+  "Mondstadt": {
+    "page": "#10251f",
+    "panel": "#1b372f",
+    "deep": "#112a24",
+    "glow": "#395c4f",
+    "ink": "#f1f0d8",
+    "muted": "#b9d3c8",
+    "line": "#758d84"
+  },
+  "Liyue": {
+    "page": "#271c15",
+    "panel": "#382a20",
+    "deep": "#291e18",
+    "glow": "#60442a",
+    "ink": "#faeed9",
+    "muted": "#d7c5a9",
+    "line": "#9c8467"
+  },
+  "Inazuma": {
+    "page": "#1d1831",
+    "panel": "#2c2345",
+    "deep": "#211a37",
+    "glow": "#534466",
+    "ink": "#f4eafe",
+    "muted": "#d2c4df",
+    "line": "#8e7ba3"
+  },
+  "Sumeru": {
+    "page": "#14251b",
+    "panel": "#233529",
+    "deep": "#17281d",
+    "glow": "#4b5833",
+    "ink": "#f3eed6",
+    "muted": "#c3d2b5",
+    "line": "#849673"
+  },
+  "Fontaine": {
+    "page": "#101d32",
+    "panel": "#1b2e49",
+    "deep": "#122238",
+    "glow": "#3a5374",
+    "ink": "#f0eddf",
+    "muted": "#bed0e5",
+    "line": "#7e97b4"
+  },
+  "Natlan": {
+    "page": "#291b20",
+    "panel": "#422832",
+    "deep": "#301d25",
+    "glow": "#6a3e47",
+    "ink": "#fff0df",
+    "muted": "#e1c3c2",
+    "line": "#a8838a"
+  },
+  "Dark": {
+    "page": "#101825",
+    "panel": "#192536",
+    "deep": "#131e2d",
+    "glow": "#3f5068",
+    "ink": "#f6ebd6",
+    "muted": "#b8c4d5",
+    "line": "#69778b"
+  },
+  "Light": {
+    "page": "#f1e9d9",
+    "panel": "#fff8ea",
+    "deep": "#fffdf9",
+    "glow": "#ded7c9",
+    "ink": "#242c3a",
+    "muted": "#46566a",
+    "line": "#6b7585"
+  }
+}

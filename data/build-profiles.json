@@ -1,0 +1,253 @@
+{
+  "profiles": {
+    "carry": {
+      "sets": [
+        "Gladiator's Finale",
+        "Marechaussee Hunter",
+        "Shimenawa's Reminiscence"
+      ],
+      "sands": ["atk_"],
+      "goblet": ["element", "atk_"],
+      "circlet": ["critRate_", "critDMG_"],
+      "weights": {
+        "critRate_": 1,
+        "critDMG_": 1,
+        "atk_": 0.8,
+        "enerRech_": 0.55,
+        "eleMas": 0.45,
+        "atk": 0.25
+      },
+      "er": [115, 145],
+      "em": [0, 120],
+      "crit": [60, 120]
+    },
+    "offField": {
+      "sets": ["Emblem of Severed Fate", "Golden Troupe", "Noblesse Oblige"],
+      "sands": ["enerRech_", "atk_"],
+      "goblet": ["element"],
+      "circlet": ["critRate_", "critDMG_"],
+      "weights": {
+        "enerRech_": 1,
+        "critRate_": 0.95,
+        "critDMG_": 0.95,
+        "atk_": 0.65,
+        "eleMas": 0.35
+      },
+      "er": [160, 210],
+      "em": [0, 120],
+      "crit": [55, 110]
+    },
+    "buffer": {
+      "sets": [
+        "Noblesse Oblige",
+        "Scroll of the Hero of Cinder City",
+        "Tenacity of the Millelith"
+      ],
+      "sands": ["enerRech_", "hp_"],
+      "goblet": ["hp_", "element"],
+      "circlet": ["critRate_", "hp_"],
+      "weights": {
+        "enerRech_": 1,
+        "hp_": 0.8,
+        "def_": 0.5,
+        "eleMas": 0.4,
+        "critRate_": 0.55
+      },
+      "er": [155, 210],
+      "em": [0, 150],
+      "crit": [30, 60]
+    },
+    "sustain": {
+      "sets": [
+        "Ocean-Hued Clam",
+        "Song of Days Past",
+        "Tenacity of the Millelith"
+      ],
+      "sands": ["enerRech_", "hp_"],
+      "goblet": ["hp_"],
+      "circlet": ["heal_", "hp_"],
+      "weights": {
+        "enerRech_": 1,
+        "hp_": 1,
+        "hp": 0.45,
+        "def_": 0.3,
+        "critRate_": 0.4
+      },
+      "er": [140, 190],
+      "em": [0, 100],
+      "crit": [20, 40]
+    },
+    "enabler": {
+      "sets": ["Instructor", "Noblesse Oblige", "Deepwood Memories"],
+      "sands": ["enerRech_", "eleMas"],
+      "goblet": ["eleMas", "element"],
+      "circlet": ["eleMas", "critRate_"],
+      "weights": {
+        "enerRech_": 1,
+        "eleMas": 0.9,
+        "critRate_": 0.7,
+        "critDMG_": 0.55,
+        "atk_": 0.5
+      },
+      "er": [145, 185],
+      "em": [200, 450],
+      "crit": [45, 90]
+    },
+    "trigger": {
+      "sets": ["Flower of Paradise Lost", "Gilded Dreams", "Wanderer's Troupe"],
+      "sands": ["eleMas", "enerRech_"],
+      "goblet": ["eleMas"],
+      "circlet": ["eleMas"],
+      "weights": {
+        "eleMas": 1,
+        "enerRech_": 0.65,
+        "critRate_": 0.2,
+        "hp_": 0.2
+      },
+      "er": [110, 150],
+      "em": [700, 1000],
+      "crit": [5, 50]
+    }
+  },
+  "characters": {
+    "Bennett": {
+      "profile": "buffer",
+      "sets": ["Noblesse Oblige", "Instructor"],
+      "er": [190, 240],
+      "goblet": ["hp_", "pyro_dmg_"],
+      "circlet": ["heal_", "hp_"]
+    },
+    "Kaedehara Kazuha": {
+      "profile": "trigger",
+      "sets": ["Viridescent Venerer"],
+      "er": [150, 190],
+      "em": [750, 1000]
+    },
+    "Sucrose": {
+      "profile": "trigger",
+      "sets": ["Viridescent Venerer"],
+      "er": [140, 180],
+      "em": [700, 950]
+    },
+    "Nahida": {
+      "profile": "enabler",
+      "sets": ["Deepwood Memories", "Gilded Dreams"],
+      "em": [650, 950],
+      "goblet": ["eleMas", "dendro_dmg_"],
+      "circlet": ["eleMas", "critRate_", "critDMG_"]
+    },
+    "Neuvillette": {
+      "profile": "carry",
+      "sets": ["Marechaussee Hunter", "Heart of Depth"],
+      "sands": ["hp_"],
+      "goblet": ["hydro_dmg_", "hp_"],
+      "weights": {
+        "critRate_": 1,
+        "critDMG_": 1,
+        "hp_": 0.9,
+        "enerRech_": 0.65
+      }
+    },
+    "Furina": {
+      "profile": "offField",
+      "sets": ["Golden Troupe"],
+      "sands": ["hp_", "enerRech_"],
+      "goblet": ["hp_", "hydro_dmg_"],
+      "weights": {
+        "critRate_": 1,
+        "critDMG_": 1,
+        "hp_": 0.9,
+        "enerRech_": 0.95
+      }
+    },
+    "Yelan": {
+      "profile": "offField",
+      "sets": ["Emblem of Severed Fate"],
+      "sands": ["enerRech_", "hp_"],
+      "weights": {
+        "critRate_": 0.95,
+        "critDMG_": 0.95,
+        "hp_": 0.85,
+        "enerRech_": 1
+      }
+    },
+    "Xiangling": {
+      "profile": "offField",
+      "sets": ["Emblem of Severed Fate", "Crimson Witch of Flames"],
+      "sands": ["enerRech_", "eleMas", "atk_"],
+      "er": [175, 230]
+    },
+    "Xingqiu": {
+      "profile": "offField",
+      "sets": ["Emblem of Severed Fate"],
+      "er": [170, 225]
+    },
+    "Fischl": {
+      "profile": "offField",
+      "sets": ["Golden Troupe", "Thundering Fury"],
+      "er": [105, 130]
+    },
+    "Kuki Shinobu": {
+      "profile": "sustain",
+      "sets": ["Tenacity of the Millelith", "Ocean-Hued Clam"],
+      "er": [100, 125]
+    },
+    "Thoma": {
+      "profile": "sustain",
+      "sets": ["Tenacity of the Millelith", "Emblem of Severed Fate"],
+      "er": [175, 230],
+      "circlet": ["hp_", "critRate_"]
+    },
+    "Zhongli": {
+      "profile": "sustain",
+      "sets": ["Tenacity of the Millelith", "Archaic Petra"],
+      "sands": ["hp_"],
+      "goblet": ["hp_"],
+      "circlet": ["hp_"],
+      "er": [100, 125]
+    },
+    "Kamisato Ayaka": {
+      "profile": "carry",
+      "sets": ["Blizzard Strayer", "Marechaussee Hunter"],
+      "er": [125, 150]
+    },
+    "Hu Tao": {
+      "profile": "carry",
+      "sets": ["Crimson Witch of Flames", "Shimenawa's Reminiscence"],
+      "sands": ["hp_", "eleMas"],
+      "em": [100, 250],
+      "weights": { "critRate_": 1, "critDMG_": 1, "hp_": 0.8, "eleMas": 0.8 }
+    },
+    "Arlecchino": {
+      "profile": "carry",
+      "sets": ["Fragment of Harmonic Whimsy", "Gladiator's Finale"]
+    },
+    "Raiden Shogun": {
+      "profile": "carry",
+      "sets": ["Emblem of Severed Fate"],
+      "sands": ["enerRech_", "atk_"],
+      "er": [200, 250]
+    },
+    "Alhaitham": {
+      "profile": "carry",
+      "sets": ["Gilded Dreams", "Deepwood Memories"],
+      "sands": ["eleMas", "atk_"],
+      "em": [250, 400]
+    },
+    "Navia": {
+      "profile": "carry",
+      "sets": ["Nighttime Whispers in the Echoing Woods", "Golden Troupe"]
+    },
+    "Arataki Itto": {
+      "profile": "carry",
+      "sets": ["Husk of Opulent Dreams", "Retracing Bolide"],
+      "sands": ["def_"],
+      "weights": {
+        "critRate_": 1,
+        "critDMG_": 1,
+        "def_": 0.9,
+        "enerRech_": 0.65
+      }
+    }
+  }
+}

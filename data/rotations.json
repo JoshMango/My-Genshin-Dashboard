@@ -1,0 +1,35 @@
+{
+  "Hypercarry": {
+    "seconds": 20,
+    "enemyLevel": 100,
+    "resistance": 10,
+    "uptime": 90,
+    "buff": 20,
+    "normalHits": 14,
+    "skillHits": 3,
+    "burstHits": 5,
+    "reactionHits": 0
+  },
+  "Reaction team": {
+    "seconds": 22,
+    "enemyLevel": 100,
+    "resistance": 10,
+    "uptime": 85,
+    "buff": 10,
+    "normalHits": 8,
+    "skillHits": 5,
+    "burstHits": 6,
+    "reactionHits": 8
+  },
+  "Hybrid": {
+    "seconds": 20,
+    "enemyLevel": 100,
+    "resistance": 10,
+    "uptime": 85,
+    "buff": 15,
+    "normalHits": 10,
+    "skillHits": 4,
+    "burstHits": 5,
+    "reactionHits": 5
+  }
+}
