@@ -147,7 +147,7 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   const links = page.getByRole("navigation", { name: "Profile links" });
   await expect(links).toHaveCount(0);
   const welcome = page.getByRole("dialog", {
-    name: "Welcome to My Genshin Dashboard",
+    name: "Welcome to Genshin Dashboard",
   });
   await expect(welcome).toBeVisible();
   await expect(welcome.getByRole("button", { name: "Got it" })).toBeFocused();
@@ -328,7 +328,7 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.keyboard.press("Escape");
   await expect(
-    page.getByRole("dialog", { name: "Welcome to My Genshin Dashboard" }),
+    page.getByRole("dialog", { name: "Welcome to Genshin Dashboard" }),
   ).toBeHidden();
   await expect(
     page.getByRole("heading", { name: "Character roster" }),
