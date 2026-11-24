@@ -40,6 +40,8 @@ The UID proxy uses Redis on Vercel and returns a service message when the shared
 
 This fan project is unaffiliated with and unendorsed by HoYoverse. Genshin Impact assets belong to HoYoverse.
 
+The interface uses locally hosted Crimson Pro and Source Sans 3. Both fonts are distributed under the SIL Open Font License, with license copies in `public/fonts`. [Crimson Pro](https://github.com/google/fonts/tree/main/ofl/crimsonpro) · [Source Sans 3](https://github.com/google/fonts/tree/main/ofl/sourcesans3)
+
 Supplemental English descriptions are loaded on demand from [genshin-db](https://github.com/theBowja/genshin-db). Enka.Network hosts artwork and equipment icons, and [Paimon.moe](https://github.com/MadeBaruna/paimon-moe) hosts element icons. Static data URLs use pinned revisions so a catalog update can be verified before it ships.
 
 Artifact verdict entries backed by [KeqingMains character guides](https://keqingmains.com/) link to their sources and describe when to use each set. Character pages without a verified guide entry display the dashboard's build suggestions as starting points.

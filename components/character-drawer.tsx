@@ -14,6 +14,7 @@ import type { Team } from "@/lib/teams";
 import { CharacterDetails } from "./character-screen";
 import { GearEditor } from "./gear-editor";
 import { useDashboard } from "./dashboard-state";
+import { GameIcon } from "./game-icon";
 import { useCatalog } from "./use-catalog";
 
 const OpenCharacter = createContext<
@@ -121,7 +122,20 @@ function Drawer({
             )}
           </section>
         )}
-        <CharacterDetails character={variant} team={team} compact />
+        <div className="drawer-layout">
+          <div className="drawer-art" data-rarity={character.rarity}>
+            <div className="splash-art-image">
+              <GameIcon
+                src={character.art}
+                fallbackSrc={character.icon}
+                alt={`${character.name} splash art`}
+                size={900}
+                eager
+              />
+            </div>
+          </div>
+          <CharacterDetails character={variant} team={team} compact />
+        </div>
       </div>
     </dialog>
   );

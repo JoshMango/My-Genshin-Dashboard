@@ -1,19 +1,25 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { saveJson } from "@/lib/browser-state";
 import { loadCatalog } from "@/lib/enka/catalog";
 import { normalizeProfile } from "@/lib/enka/normalize";
 import type { EnkaResponse } from "@/lib/enka/types";
 import { elements } from "@/lib/model";
 import { parseRoster } from "@/lib/roster";
+import { ActionIcon } from "./action-icon";
 import { CharacterCard } from "./character-card";
 import { useDashboard } from "./dashboard-state";
 import { GameIcon } from "./game-icon";
+import { RosterWelcome } from "./roster-welcome";
 import { InventoryImport } from "./inventory-import";
 import { ManualBuild } from "./manual-build";
 
-const importTabs = ["Enka UID", "Upload GOOD file", "Add manually"];
+const importTabs = [
+  ["Enka UID", "id"],
+  ["Upload GOOD file", "upload"],
+  ["Add manually", "edit"],
+] as const;
 
 export function ProfileScreen() {
   const { profile, setProfile, characters, roster, importRoster } =
@@ -22,11 +28,14 @@ export function ProfileScreen() {
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState("");
   const [tab, setTab] = useState(0);
+  const goodTab = useRef<HTMLButtonElement>(null);
+  const rosterTitle = useRef<HTMLHeadingElement>(null);
   const [element, setElement] = useState("");
   const [rarity, setRarity] = useState("");
   const [source, setSource] = useState("");
   const [needsBuild, setNeedsBuild] = useState(false);
   const [backupNotice, setBackupNotice] = useState("");
+  const leadArtwork = profile?.characters.find((character) => character.art);
   const visible = characters.filter(
     (character) =>
       (!element || character.element === element) &&
@@ -37,6 +46,11 @@ export function ProfileScreen() {
           : character.source === source)) &&
       (!needsBuild || !character.weapon || character.artifacts.length < 5),
   );
+
+  function openGoodGuide() {
+    setTab(1);
+    goodTab.current?.focus();
+  }
 
   async function lookup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -102,38 +116,100 @@ export function ProfileScreen() {
   }
 
   return (
-    <>
+    <div className="roster-home">
       <section className="hero panel profile-hero">
-        <div className="hero-orbit" aria-hidden="true">
-          <span>✦</span>
-        </div>
-        <div className="hero-content">
-          <h1>Character roster</h1>
+        <div className="hero-orbit" aria-hidden="true" />
+        {leadArtwork && (
+          <GameIcon
+            src={leadArtwork.art}
+            alt=""
+            size={800}
+            className="hero-character"
+          />
+        )}
+        <span className="roster-emblem" aria-hidden="true">
+          ✦
+        </span>
+        <h1 ref={rosterTitle} tabIndex={-1}>
+          Character roster
+        </h1>
+        {profile ? (
+          <div className="player-card">
+            {profile.namecard && (
+              <GameIcon src={profile.namecard} alt="" size={84} />
+            )}
+            <div>
+              <h2>{profile.nickname || `UID ${profile.uid}`}</h2>
+              <p className="muted">
+                {profile.rank !== undefined
+                  ? `Adventure Rank ${profile.rank} · `
+                  : ""}
+                UID {profile.uid}
+              </p>
+              {profile.signature && (
+                <p className="profile-bio">
+                  <strong>Bio:</strong> <span>{profile.signature}</span>
+                </p>
+              )}
+              {!profile.characters.length && (
+                <p className="muted">No public showcase builds</p>
+              )}
+            </div>
+          </div>
+        ) : (
           <p>Import your characters, find new teams, and compare builds.</p>
-        </div>
+        )}
+        {profile && (
+          <nav className="profile-links" aria-label="Profile links">
+            <a
+              className="button profile-link"
+              href={`https://akasha.cv/profile/${profile.uid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Leaderboards cover showcase characters only."
+            >
+              <ActionIcon name="trophy" />
+              <span>Leaderboards on Akasha.cv</span>
+              <ActionIcon name="external" />
+            </a>
+            <a
+              className="button profile-link quiet"
+              href={`https://enka.network/u/${profile.uid}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ActionIcon name="people" />
+              <span>View public characters on Enka</span>
+              <ActionIcon name="external" />
+            </a>
+          </nav>
+        )}
       </section>
       <section
-        className="section-space panel stack"
+        className="section-space panel stack roster-import"
         aria-labelledby="import-heading"
       >
         <h2 id="import-heading">Add to roster</h2>
         <div className="input-row" aria-label="Import method">
-          {importTabs.map((label, index) => (
+          {importTabs.map(([label, icon], index) => (
             <button
               key={label}
+              ref={index === 1 ? goodTab : undefined}
               type="button"
               aria-pressed={tab === index}
               className={tab === index ? "" : "quiet"}
               onClick={() => setTab(index)}
             >
-              {label}
+              <ActionIcon name={icon} /> {label}
             </button>
           ))}
         </div>
         {tab === 0 && (
           <>
-            <form className="stack" onSubmit={lookup}>
-              <label htmlFor="uid">Genshin UID</label>
+            <form className="stack roster-uid" onSubmit={lookup}>
+              <label htmlFor="uid" className="control-label">
+                <ActionIcon name="id" /> Genshin UID
+              </label>
               <div className="input-row">
                 <input
                   id="uid"
@@ -147,15 +223,20 @@ export function ProfileScreen() {
                   aria-describedby="showcase-hint"
                 />
                 <button type="submit" disabled={pending}>
-                  {pending ? "Importing…" : "Import showcase"}
+                  <ActionIcon name="search" />
+                  {pending ? "Searching…" : "Search Account"}
                 </button>
               </div>
             </form>
             <p className="muted" id="showcase-hint">
               Enable Show Character Details in your in-game Character Showcase.
-              Rotate characters into the showcase and reimport the same UID to
-              keep their builds together.
+              A UID import only includes characters in your showcase. Rotate
+              characters and reimport the same UID to keep their builds
+              together.
             </p>
+            <button type="button" className="quiet" onClick={openGoodGuide}>
+              <ActionIcon name="info" /> Learn how to import your full roster
+            </button>
             {failure && (
               <p className="error" role="alert">
                 {failure}
@@ -167,50 +248,6 @@ export function ProfileScreen() {
         {tab === 2 && <ManualBuild />}
       </section>
 
-      {profile && (
-        <section
-          className="section-space panel stack"
-          aria-label="Imported profile"
-        >
-          <div className="player-card">
-            {profile.namecard && (
-              <GameIcon src={profile.namecard} alt="" size={84} />
-            )}
-            <div>
-              <h2>{profile.nickname || `UID ${profile.uid}`}</h2>
-              <p className="muted">
-                {profile.rank !== undefined
-                  ? `Adventure Rank ${profile.rank} · `
-                  : ""}
-                UID {profile.uid}
-              </p>
-              {profile.signature && <p>{profile.signature}</p>}
-              {!profile.characters.length && (
-                <p className="muted">No public showcase builds</p>
-              )}
-            </div>
-          </div>
-          <nav className="input-row" aria-label="Profile links">
-            <a
-              className="button quiet"
-              href={`https://akasha.cv/profile/${profile.uid}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Leaderboards cover showcase characters only."
-            >
-              Leaderboards on Akasha.cv
-            </a>
-            <a
-              className="button quiet"
-              href={`https://enka.network/u/${profile.uid}/`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Showcase on Enka.Network
-            </a>
-          </nav>
-        </section>
-      )}
       <section
         className="section-space"
         aria-labelledby="roster-heading"
@@ -225,7 +262,9 @@ export function ProfileScreen() {
         {characters.length > 0 && (
           <div className="panel settings-grid roster-filters">
             <label>
-              Element
+              <span className="control-label">
+                <ActionIcon name="element" /> Element
+              </span>
               <select
                 value={element}
                 onChange={(event) => setElement(event.target.value)}
@@ -237,7 +276,9 @@ export function ProfileScreen() {
               </select>
             </label>
             <label>
-              Rarity
+              <span className="control-label">
+                <ActionIcon name="star" /> Rarity
+              </span>
               <select
                 value={rarity}
                 onChange={(event) => setRarity(event.target.value)}
@@ -248,7 +289,9 @@ export function ProfileScreen() {
               </select>
             </label>
             <label>
-              Source
+              <span className="control-label">
+                <ActionIcon name="layers" /> Source
+              </span>
               <select
                 value={source}
                 onChange={(event) => setSource(event.target.value)}
@@ -265,7 +308,9 @@ export function ProfileScreen() {
                 checked={needsBuild}
                 onChange={(event) => setNeedsBuild(event.target.checked)}
               />{" "}
-              Needs build
+              <span className="control-label">
+                <ActionIcon name="edit" /> Needs build
+              </span>
             </label>
           </div>
         )}
@@ -298,7 +343,9 @@ export function ProfileScreen() {
       </section>
       <details className="section-space panel">
         <summary>
-          <strong>Roster backup</strong>
+          <strong className="control-label">
+            <ActionIcon name="archive" /> Roster backup
+          </strong>
         </summary>
         <div className="input-row section-space">
           <button
@@ -308,11 +355,13 @@ export function ProfileScreen() {
               saveJson("genshin-roster.json", { version: 1, roster })
             }
           >
-            Export roster
+            <ActionIcon name="download" /> Export roster
           </button>
         </div>
         <label className="file-upload">
-          Import roster JSON
+          <span className="control-label">
+            <ActionIcon name="upload" /> Import roster JSON
+          </span>
           <input
             type="file"
             accept=".json,application/json"
@@ -321,6 +370,10 @@ export function ProfileScreen() {
         </label>
         <p role="status">{backupNotice}</p>
       </details>
-    </>
+      <RosterWelcome
+        openGuide={openGoodGuide}
+        onDismiss={() => rosterTitle.current?.focus()}
+      />
+    </div>
   );
 }

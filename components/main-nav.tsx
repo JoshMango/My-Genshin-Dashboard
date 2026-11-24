@@ -2,26 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ActionIcon } from "./action-icon";
 
 const pages = [
-  ["/", "Roster"],
-  ["/teams", "Teams"],
-  ["/compare", "Compare"],
-  ["/settings", "Settings"],
-  ["/about", "About"],
-];
+  ["/", "Roster", "layers"],
+  ["/teams", "Teams", "people"],
+  ["/compare", "Compare", "compare"],
+  ["/settings", "Settings", "settings"],
+  ["/about", "About", "info"],
+] as const;
 
 export function MainNav() {
   const pathname = usePathname();
   return (
     <nav aria-label="Main navigation" className="main-nav dashboard-nav">
-      {pages.map(([url, name]) => (
+      {pages.map(([url, name, icon]) => (
         <Link
           key={url}
           href={url}
-          aria-current={pathname === url ? "page" : undefined}
+          aria-current={
+            pathname === url ||
+            (url === "/" && pathname.startsWith("/character/"))
+              ? "page"
+              : undefined
+          }
         >
-          {name}
+          <ActionIcon name={icon} /> {name}
         </Link>
       ))}
     </nav>

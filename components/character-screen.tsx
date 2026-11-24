@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useState, type KeyboardEvent } from "react";
 import { artifactPieceFields, loadDescriptions } from "@/lib/enka/descriptions";
-import { formatStat, slots, statLabels, type Character } from "@/lib/model";
+import { slots, type Character } from "@/lib/model";
 import type { Team } from "@/lib/teams";
 import { ArtifactSlot } from "./artifact-slot";
 import { ArtifactVerdict } from "./artifact-verdict";
@@ -11,6 +11,7 @@ import { CharacterAppearance } from "./character-appearance";
 import { CombatStats } from "./combat-stats";
 import { useDashboard } from "./dashboard-state";
 import { ElementBadge, GameIcon } from "./game-icon";
+import { WeaponCard } from "./weapon-card";
 
 const tabs = [
   "Details / Stats",
@@ -46,11 +47,15 @@ export function CharacterDetails({
 }) {
   const panelId = useId();
   const [tab, setTab] = useState(0);
-  const [details, setDetails] = useState<Descriptions>();
+  const [loaded, setLoaded] = useState<{
+    character: Character;
+    details: Descriptions;
+  }>();
+  const details = loaded?.character === character ? loaded.details : undefined;
   useEffect(() => {
     let cancelled = false;
     void loadDescriptions(character).then((value) => {
-      if (!cancelled) setDetails(value);
+      if (!cancelled) setLoaded({ character, details: value });
     });
     return () => {
       cancelled = true;
@@ -96,6 +101,16 @@ export function CharacterDetails({
         {character.constellation}
       </p>
     </header>
+  );
+  const weaponCard = character.weapon && (
+    <WeaponCard
+      key={character.weapon.id}
+      weapon={character.weapon}
+      passiveName={details?.weaponName}
+      passive={details?.weaponText}
+      loading={!details}
+      compact={compact}
+    />
   );
 
   return (
@@ -144,46 +159,26 @@ export function CharacterDetails({
               <div className={compact ? undefined : "character-overview"}>
                 {!compact && <CharacterAppearance character={character} />}
                 <div className="panel">
-                  {identity}
+                  {compact && weaponCard ? (
+                    <div className="detail-loadout">
+                      {identity}
+                      {weaponCard}
+                    </div>
+                  ) : (
+                    identity
+                  )}
                   <CombatStats character={character} />
                 </div>
               </div>
-              <section className="section-space panel">
-                <h2>Weapon</h2>
-                {character.weapon ? (
-                  <article className="gear-card">
-                    <div className="item-heading">
-                      <GameIcon src={character.weapon.icon} alt="" size={64} />
-                      <div>
-                        <h3>{character.weapon.name}</h3>
-                        <p className="muted">
-                          {character.weapon.rarity}★ · Lv.{" "}
-                          {character.weapon.level} · R
-                          {character.weapon.refinement}
-                        </p>
-                      </div>
-                    </div>
-                    <ul className="stat-list">
-                      {character.weapon.stats.map((stat) => (
-                        <li key={stat.key}>
-                          <span>{statLabels[stat.key]}</span>
-                          <strong>{formatStat(stat)}</strong>
-                        </li>
-                      ))}
-                    </ul>
-                    {details?.weaponName && (
-                      <p>
-                        <strong>{details.weaponName}</strong>
-                      </p>
-                    )}
-                    {details?.weaponText && (
-                      <p className="description">{details.weaponText}</p>
-                    )}
-                  </article>
-                ) : (
-                  <p className="muted">No weapon is recorded for this build.</p>
-                )}
-              </section>
+              {!compact &&
+                (weaponCard ?? (
+                  <section className="section-space panel">
+                    <h2>Weapon</h2>
+                    <p className="muted">
+                      No weapon is recorded for this build.
+                    </p>
+                  </section>
+                ))}
             </>
           )}
           {tab === 1 && (

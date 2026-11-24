@@ -93,13 +93,15 @@ export function CharacterAppearance({ character }: { character: Character }) {
             onFailure={setViewerError}
           />
         ) : (
-          <GameIcon
-            src={character.art}
-            fallbackSrc={character.icon}
-            alt={character.name}
-            size={760}
-            eager
-          />
+          <div className="splash-art-image">
+            <GameIcon
+              src={character.art}
+              fallbackSrc={character.icon}
+              alt={character.name}
+              size={760}
+              eager
+            />
+          </div>
         )}
       </div>
       <div className="appearance-controls">

@@ -19,6 +19,15 @@ export const metadata: Metadata = {
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/source-sans-3-latin.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>
         <ThemeController />
         <a className="skip-link" href="#main">
@@ -27,7 +36,10 @@ export default function Layout({ children }: { children: ReactNode }) {
         <header className="site-header">
           <div className="shell header-content">
             <Link className="brand" href="/">
-              <span aria-hidden="true">◆</span> My Genshin Dashboard
+              <span className="brand-mark" aria-hidden="true">
+                ✦
+              </span>
+              <span>My Genshin Dashboard</span>
             </Link>
             <MainNav />
           </div>

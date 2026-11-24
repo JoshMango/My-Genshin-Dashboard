@@ -111,170 +111,172 @@ export function CompareScreen({
   return (
     <>
       <h1>Compare builds</h1>
-      <div className="panel stack">
-        <div className="section-heading">
-          <h2>What if?</h2>
-          <Link href="/teams">Open team builder</Link>
-        </div>
-        <label className="field narrow-field">
-          Baseline team{" "}
-          <select
-            value={baselineId}
-            onChange={(event) => {
-              setBaseline(event.target.value);
-              setEdited(undefined);
-              setRotation(undefined);
-            }}
-          >
-            <option value="">
-              {drawerComparison ? "Original build" : "Current team"}
-            </option>
-            {saved.map((team) => (
-              <option key={team.id} value={team.id}>
-                {team.name}
+      <div className="workbench-grid">
+        <div className="panel stack">
+          <div className="section-heading">
+            <h2>What if?</h2>
+            <Link href="/teams">Open team builder</Link>
+          </div>
+          <label className="field narrow-field">
+            Baseline team{" "}
+            <select
+              value={baselineId}
+              onChange={(event) => {
+                setBaseline(event.target.value);
+                setEdited(undefined);
+                setRotation(undefined);
+              }}
+            >
+              <option value="">
+                {drawerComparison ? "Original build" : "Current team"}
               </option>
-            ))}
-          </select>
-        </label>
-        {!base.slots.some(Boolean) && (
-          <p className="muted">
-            Select a saved team or add characters to the baseline in Team
-            Builder.
-          </p>
-        )}
-        <h3>Variant lineup</h3>
-        <div className="settings-grid">
-          {variant.slots.map((character, index) => (
-            <label key={index}>
-              Slot {index + 1}{" "}
-              <select
-                value={character?.id ?? ""}
-                onChange={(event) => replace(index, event.target.value)}
-              >
-                <option value="">Empty</option>
-                {character &&
-                  !characters.some((entry) => entry.id === character.id) && (
-                    <option value={character.id}>
-                      {character.name} · Current build
-                    </option>
-                  )}
-                {characters.map((entry) => (
-                  <option key={entry.id} value={entry.id}>
-                    {entry.name}
-                    {entry.source === "preview" ? " · Not owned" : ""}
-                  </option>
-                ))}
-                {options
-                  .filter(
-                    (entry) =>
-                      entry.id !== character?.id &&
-                      !characters.some((item) => item.id === entry.id),
-                  )
-                  .map((entry) => (
+              {saved.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          {!base.slots.some(Boolean) && (
+            <p className="muted">
+              Select a saved team or add characters to the baseline in Team
+              Builder.
+            </p>
+          )}
+          <h3>Variant lineup</h3>
+          <div className="settings-grid">
+            {variant.slots.map((character, index) => (
+              <label key={index}>
+                Slot {index + 1}{" "}
+                <select
+                  value={character?.id ?? ""}
+                  onChange={(event) => replace(index, event.target.value)}
+                >
+                  <option value="">Empty</option>
+                  {character &&
+                    !characters.some((entry) => entry.id === character.id) && (
+                      <option value={character.id}>
+                        {character.name} · Current build
+                      </option>
+                    )}
+                  {characters.map((entry) => (
                     <option key={entry.id} value={entry.id}>
-                      {entry.label} · Not owned
+                      {entry.name}
+                      {entry.source === "preview" ? " · Not owned" : ""}
                     </option>
                   ))}
-              </select>
-            </label>
-          ))}
-        </div>
-        {variant !== base && (
-          <button
-            type="button"
-            className="quiet"
-            onClick={() => setEdited(null)}
-          >
-            Reset variant
-          </button>
-        )}
-        {variant.slots.some(Boolean) && (
-          <details className="gear-card">
-            <summary>
-              <strong>Edit variant weapon or artifacts</strong>
-            </summary>
-            <label className="field narrow-field">
-              Character slot{" "}
-              <select
-                value={gearSlot}
-                onChange={(event) => setGearSlot(Number(event.target.value))}
-              >
-                {variant.slots.map((entry, index) => (
-                  <option key={index} value={index}>
-                    {entry?.name ?? `Slot ${index + 1} (empty)`}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {catalog && activeCharacter && (
-              <GearEditor
-                key={`${gearSlot}:${activeCharacter.id}`}
-                catalog={catalog}
-                character={activeCharacter}
-                update={(character) =>
-                  setEdited(placeCharacter(variant, gearSlot, character))
-                }
-              />
-            )}
-            {!catalog && (
-              <p className="muted">
-                Game catalog is needed for equipment editing.
-              </p>
-            )}
-          </details>
-        )}
-      </div>
-      <section className="panel section-space stack">
-        <h2>Rotation assumptions</h2>
-        <label className="field narrow-field">
-          Load template{" "}
-          <select
-            value=""
-            onChange={(event) => {
-              if (event.target.value)
-                setRotation(templates[event.target.value as Archetype]);
-            }}
-          >
-            <option value="">Choose a rotation template</option>
-            {Object.keys(templates).map((key) => (
-              <option key={key}>{key}</option>
+                  {options
+                    .filter(
+                      (entry) =>
+                        entry.id !== character?.id &&
+                        !characters.some((item) => item.id === entry.id),
+                    )
+                    .map((entry) => (
+                      <option key={entry.id} value={entry.id}>
+                        {entry.label} · Not owned
+                      </option>
+                    ))}
+                </select>
+              </label>
             ))}
-          </select>
-        </label>
-        <div className="settings-grid">
-          {fields.map(({ key, label, min, max }) => (
-            <label key={key}>
-              {label}
-              <input
-                type="number"
-                min={min}
-                max={max}
-                value={effectiveRotation[key]}
-                onChange={(event) => {
-                  if (
-                    event.target.value !== "" &&
-                    Number.isFinite(event.target.valueAsNumber)
-                  ) {
-                    setRotation({
-                      ...effectiveRotation,
-                      [key]: Math.min(
-                        max,
-                        Math.max(min, event.target.valueAsNumber),
-                      ),
-                    });
+          </div>
+          {variant !== base && (
+            <button
+              type="button"
+              className="quiet"
+              onClick={() => setEdited(null)}
+            >
+              Reset variant
+            </button>
+          )}
+          {variant.slots.some(Boolean) && (
+            <details className="gear-card">
+              <summary>
+                <strong>Edit variant weapon or artifacts</strong>
+              </summary>
+              <label className="field narrow-field">
+                Character slot{" "}
+                <select
+                  value={gearSlot}
+                  onChange={(event) => setGearSlot(Number(event.target.value))}
+                >
+                  {variant.slots.map((entry, index) => (
+                    <option key={index} value={index}>
+                      {entry?.name ?? `Slot ${index + 1} (empty)`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {catalog && activeCharacter && (
+                <GearEditor
+                  key={`${gearSlot}:${activeCharacter.id}`}
+                  catalog={catalog}
+                  character={activeCharacter}
+                  update={(character) =>
+                    setEdited(placeCharacter(variant, gearSlot, character))
                   }
-                }}
-              />
-            </label>
-          ))}
+                />
+              )}
+              {!catalog && (
+                <p className="muted">
+                  Game catalog is needed for equipment editing.
+                </p>
+              )}
+            </details>
+          )}
         </div>
-        <p className="muted">
-          Both lineups use one enemy, average critical hits, a shared resistance
-          value, and generic talent and hit templates. The estimator assigns the
-          selected reaction to one eligible trigger and uses the manual buff
-          value for team effects.
-        </p>
-      </section>
+        <section className="panel stack rotation-worksheet">
+          <h2>Rotation assumptions</h2>
+          <label className="field narrow-field">
+            Load template{" "}
+            <select
+              value=""
+              onChange={(event) => {
+                if (event.target.value)
+                  setRotation(templates[event.target.value as Archetype]);
+              }}
+            >
+              <option value="">Choose a rotation template</option>
+              {Object.keys(templates).map((key) => (
+                <option key={key}>{key}</option>
+              ))}
+            </select>
+          </label>
+          <div className="settings-grid">
+            {fields.map(({ key, label, min, max }) => (
+              <label key={key}>
+                {label}
+                <input
+                  type="number"
+                  min={min}
+                  max={max}
+                  value={effectiveRotation[key]}
+                  onChange={(event) => {
+                    if (
+                      event.target.value !== "" &&
+                      Number.isFinite(event.target.valueAsNumber)
+                    ) {
+                      setRotation({
+                        ...effectiveRotation,
+                        [key]: Math.min(
+                          max,
+                          Math.max(min, event.target.valueAsNumber),
+                        ),
+                      });
+                    }
+                  }}
+                />
+              </label>
+            ))}
+          </div>
+          <p className="muted">
+            Both lineups use one enemy, average critical hits, a shared
+            resistance value, and generic talent and hit templates. The
+            estimator assigns the selected reaction to one eligible trigger and
+            uses the manual buff value for team effects.
+          </p>
+        </section>
+      </div>
       <section
         className="section-space stack"
         aria-labelledby="estimated-heading"

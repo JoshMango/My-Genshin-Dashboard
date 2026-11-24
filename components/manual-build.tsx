@@ -12,6 +12,7 @@ import {
   type Stat,
   type StatKey,
 } from "@/lib/model";
+import { ActionIcon } from "./action-icon";
 import { useDashboard } from "./dashboard-state";
 import { useCatalog } from "./use-catalog";
 
@@ -61,7 +62,7 @@ export function ManualBuild() {
       {failure || "Loading game catalog…"}{" "}
       {failure && (
         <button type="button" className="quiet" onClick={retry}>
-          Retry
+          <ActionIcon name="retry" /> Retry
         </button>
       )}
     </p>
@@ -144,7 +145,9 @@ function BuildForm({ catalog }: { catalog: Catalog }) {
   return (
     <form onSubmit={submit} className="stack">
       <label className="field">
-        Character{" "}
+        <span className="control-label">
+          <ActionIcon name="people" /> Character
+        </span>
         <select
           value={id}
           onChange={(event) => {
@@ -264,7 +267,9 @@ function BuildForm({ catalog }: { catalog: Catalog }) {
             {slots.map((slot) => (
               <details key={slot} className="gear-card">
                 <summary>
-                  <strong>{slot}</strong>
+                  <strong className="control-label">
+                    <ActionIcon name="element" /> {slot}
+                  </strong>
                 </summary>
                 <label className="field">
                   Set{" "}
@@ -326,7 +331,9 @@ function BuildForm({ catalog }: { catalog: Catalog }) {
               </details>
             ))}
           </div>
-          <button type="submit">Save manual build</button>
+          <button type="submit">
+            <ActionIcon name="save" /> Save manual build
+          </button>
         </div>
       )}
       <p role="status">{notice}</p>

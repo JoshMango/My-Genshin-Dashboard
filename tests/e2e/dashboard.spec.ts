@@ -46,12 +46,17 @@ const data: Record<string, unknown> = {
       "8": "Kuki Shinobu",
       "9": "Favonius Sword",
       "10": "Favonius Codex",
+      "11": "Mistsplitter Reforged",
     },
   },
   "namecards.json": {},
   "affixes.json": {},
   "curves.json": {},
   "relic_levels.json": {},
+  "mistsplitterreforged.json": {
+    effectName: "Mistsplitter's Edge",
+    r1: { description: "Gain a 12% Elemental DMG Bonus." },
+  },
 };
 
 async function stubCatalog(page: Page) {
@@ -84,7 +89,11 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
     route.fulfill({
       json: {
         ttl: 60,
-        playerInfo: { nickname: "Traveler Example", level: 60 },
+        playerInfo: {
+          nickname: "Traveler Example",
+          level: 60,
+          signature: "See you in Teyvat.",
+        },
         avatarInfoList: [
           {
             avatarId: 10000002,
@@ -92,6 +101,19 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
             fightPropMap: { "2001": 2200, "20": 0.7, "22": 1.5 },
             skillLevelMap: { "11": 8, "12": 8, "13": 9 },
             equipList: [
+              {
+                itemId: 11509,
+                weapon: {
+                  level: 90,
+                  promoteLevel: 6,
+                  affixMap: { "111509": 0 },
+                },
+                flat: {
+                  nameTextMapHash: "11",
+                  rankLevel: 5,
+                  icon: "UI_EquipIcon_Sword_Narukami",
+                },
+              },
               {
                 itemId: 1,
                 reliquary: { level: 21 },
@@ -122,18 +144,107 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
     }),
   );
   await page.goto("/");
+  const links = page.getByRole("navigation", { name: "Profile links" });
+  await expect(links).toHaveCount(0);
+  const welcome = page.getByRole("dialog", {
+    name: "Welcome to My Genshin Dashboard",
+  });
+  await expect(welcome).toBeVisible();
+  await expect(welcome.getByRole("button", { name: "Got it" })).toBeFocused();
+  await welcome.getByRole("button", { name: "Upload GOOD file" }).click();
+  await expect(welcome).toBeHidden();
+  await expect(
+    page.getByRole("heading", { name: "What is a GOOD file?" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Inventory Kamera" }),
+  ).toHaveAttribute("href", /Inventory_Kamera/);
+  await expect(
+    page.getByRole("button", { name: "Upload GOOD file" }),
+  ).toBeFocused();
+  await page.getByRole("button", { name: "Enka UID" }).click();
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(page.getByText("Traveler Example")).toBeVisible();
+  await expect(page.getByText("Bio: See you in Teyvat.")).toBeVisible();
+  await expect(
+    links.getByRole("link", { name: "Leaderboards on Akasha.cv" }),
+  ).toHaveAttribute("href", "https://akasha.cv/profile/618285856");
+  await expect(
+    links.getByRole("link", { name: "View public characters on Enka" }),
+  ).toHaveAttribute("href", "https://enka.network/u/618285856/");
+  if (
+    await page.evaluate(
+      () => matchMedia("(hover: hover) and (pointer: fine)").matches,
+    )
+  ) {
+    const enka = links.getByRole("link", {
+      name: "View public characters on Enka",
+    });
+    await enka.hover();
+    await expect(enka).toHaveCSS("translate", "0px -3px");
+  }
   await page.getByRole("button", { name: /Kamisato Ayaka/ }).click();
   await expect(
     page
       .getByRole("dialog", { name: /Kamisato Ayaka/ })
       .getByRole("heading", { name: "Kamisato Ayaka" }),
   ).toBeVisible();
+  const drawer = page.getByRole("dialog", { name: /Kamisato Ayaka/ });
+  await expect(drawer).toBeVisible();
+  const art = drawer.getByRole("img", { name: "Kamisato Ayaka splash art" });
+  await expect(art).toHaveAttribute("src", /UI_Gacha_AvatarImg_Ayaka\.png$/);
+  await expect(drawer.locator(".drawer-art")).toHaveAttribute(
+    "data-rarity",
+    "5",
+  );
+  expect(
+    await drawer.evaluate((element) => {
+      const art = element.querySelector(".drawer-art")?.getBoundingClientRect();
+      const details = element
+        .querySelector('[role="tablist"]')
+        ?.getBoundingClientRect();
+      if (!art || !details) return false;
+      return matchMedia("(min-width: 50rem)").matches
+        ? art.right < details.left
+        : art.bottom < details.top;
+    }),
+  ).toBe(true);
+  await expect(art).toHaveCSS("animation-name", "character-art-float");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(art).toHaveCSS("animation-name", "none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const weapon = drawer.getByRole("button", { name: /Mistsplitter Reforged/ });
+  const weaponGlow = () =>
+    weapon.evaluate(
+      (element) => getComputedStyle(element, "::before").animationName,
+    );
+  await expect.poll(weaponGlow).toBe("weapon-gold-drift");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(weaponGlow).toBe("none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(
-    page.getByRole("dialog", { name: /Kamisato Ayaka/ }),
-  ).toBeVisible();
+    weapon.getByRole("img", { name: "5-star rarity" }).locator("svg"),
+  ).toHaveCount(5);
+  await expect(weapon.locator("img")).toHaveAttribute(
+    "src",
+    /UI_EquipIcon_Sword_Narukami\.png$/,
+  );
+  const passive = drawer.getByText("Gain a 12% Elemental DMG Bonus.");
+  await expect(passive).toBeHidden();
+  if (
+    await page.evaluate(
+      () => matchMedia("(hover: hover) and (pointer: fine)").matches,
+    )
+  ) {
+    await weapon.hover();
+  } else {
+    await weapon.tap();
+  }
+  await expect(passive).toBeVisible();
+  await weapon.press("Escape");
+  await expect(passive).toBeHidden();
+  await expect(drawer).toBeVisible();
   await expect(page.locator(".combat-stat[data-essential] dt")).toHaveText([
     "ATKEssential",
     "CRIT RateEssential",
@@ -149,6 +260,9 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
     .filter({ has: page.getByRole("heading", { name: "Flower" }) });
   await expect(flower.getByText("Snowswept Memory")).toBeVisible();
   await expect(flower.getByText("9.3%")).toBeVisible();
+  await expect(
+    flower.getByRole("img", { name: "5-star rarity" }).locator("svg"),
+  ).toHaveCount(5);
   await expect(flower.locator("img")).toHaveAttribute(
     "src",
     /UI_RelicIcon_14001_4/,
@@ -204,15 +318,28 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
     }),
   );
   await page.goto("/");
-  await page.keyboard.press("Tab");
+  const ripple = () =>
+    page
+      .locator(".hero-orbit")
+      .evaluate((orbit) => getComputedStyle(orbit, "::before").animationName);
+  await expect.poll(ripple).toBe("roster-ripple");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(ripple).toBe("none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.keyboard.press("Escape");
   await expect(
-    page.getByRole("link", { name: "Skip to content" }),
+    page.getByRole("dialog", { name: "Welcome to My Genshin Dashboard" }),
+  ).toBeHidden();
+  await expect(
+    page.getByRole("heading", { name: "Character roster" }),
   ).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Enka UID" })).toBeFocused();
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(page.getByText("No public showcase builds")).toBeVisible();
   await page.getByLabel("Genshin UID").fill("618285857");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(
     page.getByRole("alert").filter({ hasText: "Enka is busy" }),
   ).toBeVisible();
@@ -226,6 +353,8 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(await page.evaluate(() => window.innerWidth));
+  await page.getByRole("link", { name: "Roster", exact: true }).click();
+  await expect.poll(ripple).toBe("none");
 });
 
 function sampleGlb() {
@@ -278,8 +407,9 @@ test("opens, remembers, and removes a character's local 3D model", async ({
     }),
   );
   await page.goto("/");
+  await page.getByRole("button", { name: "Got it" }).click();
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await page.getByRole("button", { name: /Kamisato Ayaka/ }).waitFor();
   await page.goto("/character/10000002");
   await page.getByLabel("Load 3D model").setInputFiles({
@@ -398,12 +528,14 @@ test("discovers a Hyperbloom team from the owned roster and sends it to Compare"
     }),
   );
   await page.goto("/");
+  await page.getByRole("button", { name: "Got it" }).click();
   await page.getByLabel("Genshin UID").fill("618285856");
-  await page.getByRole("button", { name: "Import showcase" }).click();
+  await page.getByRole("button", { name: "Search Account" }).click();
   await expect(
     page.getByRole("link", { name: "Leaderboards on Akasha.cv" }),
   ).toHaveAttribute("href", "https://akasha.cv/profile/618285856");
   await page.reload();
+  await page.getByRole("button", { name: "Got it" }).click();
   await expect(
     page.getByRole("button", { name: /Nahida.*Showcase/ }),
   ).toBeVisible();
