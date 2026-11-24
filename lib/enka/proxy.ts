@@ -18,10 +18,23 @@ const prune = () => {
   }
 };
 
+function redisConfig() {
+  const {
+    UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN,
+    KV_REST_API_URL,
+    KV_REST_API_TOKEN,
+  } = process.env;
+  if (UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN)
+    return { url: UPSTASH_REDIS_REST_URL, token: UPSTASH_REDIS_REST_TOKEN };
+  if (KV_REST_API_URL && KV_REST_API_TOKEN)
+    return { url: KV_REST_API_URL, token: KV_REST_API_TOKEN };
+}
+
 async function redis<T>(command: (string | number)[]): Promise<T> {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) throw new Error("Redis is not configured.");
+  const config = redisConfig();
+  if (!config) throw new Error("Redis is not configured.");
+  const { url, token } = config;
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -116,9 +129,7 @@ export async function showcase(
       400,
     );
   const hosted = process.env.VERCEL === "1";
-  const shared = Boolean(
-    process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
-  );
+  const shared = Boolean(redisConfig());
   if (hosted && !shared)
     return error(
       "unconfigured",
