@@ -9,37 +9,40 @@ const elementAssets =
 
 export function GameIcon({
   src,
+  fallbackSrc,
   alt,
   size = 48,
   className = "",
   eager = false,
 }: {
   src?: string;
+  fallbackSrc?: string;
   alt: string;
   size?: number;
   className?: string;
   eager?: boolean;
 }) {
-  const [failed, setFailed] = useState<string>();
+  const [failed, setFailed] = useState<string[]>([]);
+  const source = src && !failed.includes(src) ? src : fallbackSrc;
   const allowed =
-    typeof src === "string" &&
+    typeof source === "string" &&
     (/^https:\/\/enka\.network\/ui\/[A-Za-z0-9_]+\.(png|jpg|webp)$/i.test(
-      src,
+      source,
     ) ||
-      (src.startsWith(elementAssets) &&
+      (source.startsWith(elementAssets) &&
         /^(pyro|hydro|electro|cryo|dendro|anemo|geo)\.png$/.test(
-          src.slice(elementAssets.length),
+          source.slice(elementAssets.length),
         )));
-  return allowed && src !== failed ? (
+  return allowed && !failed.includes(source) ? (
     <Image
-      src={src}
+      src={source}
       alt={alt}
       width={size}
       height={size}
       className={className}
       unoptimized
       loading={eager ? "eager" : "lazy"}
-      onError={() => setFailed(src)}
+      onError={() => setFailed((previous) => [...previous, source])}
     />
   ) : (
     <span

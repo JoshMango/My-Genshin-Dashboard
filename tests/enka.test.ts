@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { showcase, validUid } from "@/lib/enka/proxy";
-import { normalizeProfile } from "@/lib/enka/normalize";
+import { normalizeCharacter, normalizeProfile } from "@/lib/enka/normalize";
 import type { Catalog } from "@/lib/enka/catalog";
 
 afterEach(() => {
@@ -86,4 +86,68 @@ it("preserves available builds when player profile fields are placeholders", () 
     stats: { atk: 1700, critRate_: 42 },
   });
   expect(result.characters[0].talents[1]).toMatchObject({ level: 8, bonus: 3 });
+});
+
+it("imports current showcase artifacts and legacy stat values with their original units", () => {
+  const catalog: Catalog = {
+    avatars: {},
+    weapons: {},
+    relics: { Items: {}, Sets: { 15038: { Name: "42", AddProps: {} } } },
+    loc: { "42": "Obsidian Codex", "43": "Reckoning of the Xenogenic" },
+    namecards: {},
+    affixes: { 501221: { PropType: 22, Efficiency: 0.7, Value: 0.054 } },
+    curves: {},
+    relicLevels: {},
+  };
+  const character = normalizeCharacter(
+    {
+      avatarId: 10000106,
+      equipList: [
+        {
+          itemId: 1,
+          reliquary: { level: 21, appendPropIdList: [501221] },
+          flat: {
+            nameTextMapHash: "43",
+            setNameTextMapHash: "unavailable",
+            setId: 15038,
+            equipType: "EQUIP_BRACER",
+            rankLevel: 5,
+            icon: "UI_RelicIcon_15038_4",
+            reliquaryMainstat: { mainPropId: "FIGHT_PROP_HP", statValue: 4780 },
+            reliquarySubstats: [
+              { appendPropId: "FIGHT_PROP_CRITICAL_HURT", statValue: 5.4 },
+              { appendPropID: "FIGHT_PROP_CRITICAL", propValue: 3.1 },
+            ],
+          },
+        },
+        {
+          itemId: 2,
+          weapon: { level: 90 },
+          flat: {
+            weaponStats: [
+              { mainPropId: "FIGHT_PROP_BASE_ATTACK", statValue: 741 },
+            ],
+          },
+        },
+      ],
+    },
+    catalog,
+  );
+
+  expect(character.artifacts).toEqual([
+    expect.objectContaining({
+      slot: "Flower",
+      name: "Reckoning of the Xenogenic",
+      setId: "15038",
+      setName: "Obsidian Codex",
+      level: 20,
+      icon: "https://enka.network/ui/UI_RelicIcon_15038_4.png",
+      main: { key: "hp", value: 4780 },
+      substats: [
+        { key: "critDMG_", value: 5.4, rolls: [0.7] },
+        { key: "critRate_", value: 3.1 },
+      ],
+    }),
+  ]);
+  expect(character.weapon?.stats).toEqual([{ key: "atk", value: 741 }]);
 });

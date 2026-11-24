@@ -1,17 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type KeyboardEvent } from "react";
-import { loadDescriptions } from "@/lib/enka/descriptions";
-import {
-  formatStat,
-  slots,
-  statLabels,
-  type Character,
-  type StatKey,
-} from "@/lib/model";
+import { useEffect, useId, useState, type KeyboardEvent } from "react";
+import { artifactPieceFields, loadDescriptions } from "@/lib/enka/descriptions";
+import { formatStat, slots, statLabels, type Character } from "@/lib/model";
+import type { Team } from "@/lib/teams";
 import { ArtifactSlot } from "./artifact-slot";
 import { ArtifactVerdict } from "./artifact-verdict";
+import { CharacterAppearance } from "./character-appearance";
+import { CombatStats } from "./combat-stats";
 import { useDashboard } from "./dashboard-state";
 import { ElementBadge, GameIcon } from "./game-icon";
 
@@ -21,15 +18,6 @@ const tabs = [
   "Constellations",
   "Talents",
 ] as const;
-const summaryStats: StatKey[] = [
-  "hp",
-  "atk",
-  "def",
-  "eleMas",
-  "critRate_",
-  "critDMG_",
-  "enerRech_",
-];
 type Descriptions = Awaited<ReturnType<typeof loadDescriptions>>;
 
 export function CharacterScreen({ id }: { id: string }) {
@@ -47,7 +35,16 @@ export function CharacterScreen({ id }: { id: string }) {
   );
 }
 
-function CharacterDetails({ character }: { character: Character }) {
+export function CharacterDetails({
+  character,
+  compact = false,
+  team,
+}: {
+  character: Character;
+  compact?: boolean;
+  team?: Team;
+}) {
+  const panelId = useId();
   const [tab, setTab] = useState(0);
   const [details, setDetails] = useState<Descriptions>();
   useEffect(() => {
@@ -76,111 +73,82 @@ function CharacterDetails({ character }: { character: Character }) {
     if (index !== tab || event.key === "Home" || event.key === "End") {
       event.preventDefault();
       setTab(index);
-      document.getElementById(`character-tab-${index}`)?.focus();
+      document.getElementById(`${panelId}-tab-${index}`)?.focus();
     }
   }
 
-  const sets = Object.entries(
-    character.artifacts.reduce<Record<string, number>>((counts, item) => {
-      if (item.setId || item.setName !== "Unknown set")
-        counts[item.setName] = (counts[item.setName] ?? 0) + 1;
-      return counts;
-    }, {}),
-  ).filter(([, count]) => count >= 2);
-  const elementStat = character.element
-    ? (`${character.element.toLowerCase()}_dmg_` as StatKey)
-    : undefined;
-  const displayStats = [
-    ...summaryStats,
-    ...(elementStat ? [elementStat] : []),
-    ...(Object.keys(character.stats).filter(
-      (key) =>
-        !summaryStats.includes(key as StatKey) &&
-        key !== elementStat &&
-        key.endsWith("dmg_"),
-    ) as StatKey[]),
-  ];
+  const equippedSets = new Map<string, Character["artifacts"]>();
+  for (const item of character.artifacts) {
+    if (!item.setId && item.setName === "Unknown set") continue;
+    const pieces = equippedSets.get(item.setName) ?? [];
+    pieces.push(item);
+    equippedSets.set(item.setName, pieces);
+  }
+  const activeSets = [...equippedSets].filter(
+    ([, pieces]) => pieces.length >= 2,
+  );
+  const identity = (
+    <header className="detail-identity">
+      <ElementBadge element={character.element} />
+      {compact ? <h2>{character.name}</h2> : <h1>{character.name}</h1>}
+      <p className="muted">
+        Lv. {character.level} · Ascension {character.ascension} · C
+        {character.constellation}
+      </p>
+    </header>
+  );
 
   return (
     <>
-      <Link className="back-link" href="/">
-        Character roster
-      </Link>
+      {!compact && (
+        <Link className="back-link" href="/">
+          Character roster
+        </Link>
+      )}
       <section
         className="character-detail section-space"
         data-element={character.element}
       >
-        <aside className="detail-art panel">
-          <div
-            role="tablist"
-            aria-label="Character details"
-            className="detail-tabs"
-          >
-            {tabs.map((label, index) => (
-              <button
-                type="button"
-                role="tab"
-                id={`character-tab-${index}`}
-                key={label}
-                aria-selected={tab === index}
-                tabIndex={tab === index ? 0 : -1}
-                aria-controls="character-panel"
-                className={tab === index ? "" : "quiet"}
-                onClick={() => setTab(index)}
-                onKeyDown={navigate}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          <GameIcon
-            src={character.art ?? character.icon}
-            alt={character.name}
-            size={480}
-            eager
-          />
-        </aside>
         <div
-          className="panel detail-panel"
+          role="tablist"
+          aria-label="Character details"
+          className="detail-tabs"
+        >
+          {tabs.map((label, index) => (
+            <button
+              type="button"
+              role="tab"
+              id={`${panelId}-tab-${index}`}
+              key={label}
+              aria-selected={tab === index}
+              tabIndex={tab === index ? 0 : -1}
+              aria-controls={panelId}
+              className={tab === index ? "" : "quiet"}
+              onClick={() => setTab(index)}
+              onKeyDown={navigate}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div
+          className={tab === 0 ? "detail-panel" : "panel detail-panel"}
           role="tabpanel"
-          id="character-panel"
-          aria-labelledby={`character-tab-${tab}`}
+          id={panelId}
+          aria-labelledby={`${panelId}-tab-${tab}`}
           tabIndex={0}
         >
-          <ElementBadge element={character.element} />
-          <h1>{character.name}</h1>
-          <p className="muted">
-            Lv. {character.level} · Ascension {character.ascension} · C
-            {character.constellation}
-          </p>
+          {tab !== 0 && identity}
           {tab === 0 && (
             <>
-              <h2>Combat stats</h2>
-              <dl className="combat-stats">
-                {displayStats.map((key) => {
-                  const value = character.stats[key];
-                  const base = character.base[key];
-                  return (
-                    <div key={key}>
-                      <dt>
-                        <span aria-hidden="true">◇</span> {statLabels[key]}
-                      </dt>
-                      <dd>
-                        {value === undefined
-                          ? "Unavailable"
-                          : formatStat({ key, value })}
-                        {base !== undefined && value !== undefined && (
-                          <small className="muted">
-                            Base {formatStat({ key, value: base })} · Bonus{" "}
-                            {formatStat({ key, value: value - base })}
-                          </small>
-                        )}
-                      </dd>
-                    </div>
-                  );
-                })}
-              </dl>
-              <section className="section-space">
+              <div className={compact ? undefined : "character-overview"}>
+                {!compact && <CharacterAppearance character={character} />}
+                <div className="panel">
+                  {identity}
+                  <CombatStats character={character} />
+                </div>
+              </div>
+              <section className="section-space panel">
                 <h2>Weapon</h2>
                 {character.weapon ? (
                   <article className="gear-card">
@@ -221,16 +189,27 @@ function CharacterDetails({ character }: { character: Character }) {
           {tab === 1 && (
             <>
               <h2>Artifacts</h2>
-              {!!sets.length && (
+              {character.source === "showcase" &&
+                character.artifacts.length === 0 && (
+                  <p className="muted">
+                    The public showcase returned no equipped artifacts for this
+                    build. Reimport the UID after your in-game showcase
+                    refreshes.
+                  </p>
+                )}
+              {activeSets.length > 0 && (
                 <div className="set-bonuses">
-                  {sets.map(([name, count]) => (
+                  {activeSets.map(([name, pieces]) => (
                     <div key={name}>
-                      <strong>{name}</strong>
+                      <div className="item-heading">
+                        <GameIcon src={pieces[0].icon} alt="" size={36} />
+                        <strong>{name}</strong>
+                      </div>
                       <p>
                         <span className="bonus-label">2-piece active</span>{" "}
                         {details?.sets[name]?.effect2Pc}
                       </p>
-                      {count >= 4 && (
+                      {pieces.length >= 4 && (
                         <p>
                           <span className="bonus-label">4-piece active</span>{" "}
                           {details?.sets[name]?.effect4Pc}
@@ -241,20 +220,28 @@ function CharacterDetails({ character }: { character: Character }) {
                 </div>
               )}
               <div className="artifact-grid">
-                {slots.map((slot) => (
-                  <ArtifactSlot
-                    key={slot}
-                    slot={slot}
-                    artifact={character.artifacts.find(
-                      (item) => item.slot === slot,
-                    )}
-                  />
-                ))}
+                {slots.map((slot) => {
+                  const artifact = character.artifacts.find(
+                    (item) => item.slot === slot,
+                  );
+                  const name =
+                    artifact &&
+                    details?.sets[artifact.setName]?.[artifactPieceFields[slot]]
+                      ?.name;
+                  return (
+                    <ArtifactSlot
+                      key={slot}
+                      slot={slot}
+                      artifact={artifact}
+                      name={name}
+                    />
+                  );
+                })}
               </div>
             </>
           )}
           {(tab === 0 || tab === 1) && (
-            <ArtifactVerdict character={character} />
+            <ArtifactVerdict character={character} team={team} />
           )}
           {tab === 2 && (
             <>

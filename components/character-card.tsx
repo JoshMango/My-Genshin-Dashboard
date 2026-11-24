@@ -1,15 +1,22 @@
-import Link from "next/link";
+"use client";
+
 import type { Character } from "@/lib/model";
+import { useOpenCharacter } from "./character-drawer";
 import { ElementBadge, GameIcon } from "./game-icon";
 
 export function CharacterCard({ character }: { character: Character }) {
+  const open = useOpenCharacter();
   return (
     <article
       className="character-card"
       data-rarity={character.rarity}
       data-element={character.element}
     >
-      <Link className="character-link" href={`/character/${character.id}`}>
+      <button
+        type="button"
+        className="character-link"
+        onClick={() => open(character)}
+      >
         <div className="character-art">
           <ElementBadge element={character.element} />
           <GameIcon src={character.icon} alt="" size={176} />
@@ -18,10 +25,16 @@ export function CharacterCard({ character }: { character: Character }) {
           <h3>{character.name}</h3>
           <span>
             Lv. {character.level} · C{character.constellation}
-            {character.source === "preview" && " · Not owned"}
+          </span>
+          <span className="source-badge">
+            {character.source === "showcase"
+              ? "Showcase"
+              : character.source === "preview"
+                ? "Not owned"
+                : "Imported"}
           </span>
         </div>
-      </Link>
+      </button>
       <div className="gear-icons">
         <GameIcon
           src={character.weapon?.icon}

@@ -71,10 +71,7 @@ export function InventoryImport() {
   }
 
   return (
-    <details className="panel import-panel">
-      <summary>
-        <strong>GOOD inventory</strong>
-      </summary>
+    <div>
       <p className="muted">
         Import characters, weapons, and artifacts from a scanner or Genshin
         Optimizer.
@@ -120,6 +117,6 @@ export function InventoryImport() {
         </p>
       )}
       <p role="status">{notice}</p>
-    </details>
+    </div>
   );
 }

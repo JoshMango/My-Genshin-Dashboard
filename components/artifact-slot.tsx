@@ -4,9 +4,11 @@ import { GameIcon } from "./game-icon";
 export function ArtifactSlot({
   slot,
   artifact,
+  name,
 }: {
   slot: Slot;
   artifact?: Artifact;
+  name?: string;
 }) {
   return (
     <article className="gear-card" data-rarity={artifact?.rarity}>
@@ -14,6 +16,9 @@ export function ArtifactSlot({
         <GameIcon src={artifact?.icon} alt="" size={56} />
         <div>
           <h3>{slot}</h3>
+          {(artifact?.name || name) && (
+            <p className="artifact-piece-name">{artifact?.name || name}</p>
+          )}
           <p className="muted">
             {artifact
               ? `${artifact.setName} · ${artifact.rarity}★ · +${artifact.level}`

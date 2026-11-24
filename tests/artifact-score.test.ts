@@ -6,6 +6,10 @@ import {
   recommendBuild,
 } from "@/lib/recommend/artifacts";
 import { blankTeam, type Team } from "@/lib/teams";
+import {
+  combatStatLayout,
+  essentialCombatStats,
+} from "@/lib/recommend/combat-stats";
 
 it("changes a Hyperbloom trigger to EM main stats and finds better inventory pieces", () => {
   const weak: Artifact = {
@@ -46,4 +50,42 @@ it("changes a Hyperbloom trigger to EM main stats and finds better inventory pie
   expect(
     artifactUpgrades(character, [weak, better], profile)[0].artifact.id,
   ).toBe("better");
+});
+
+it("highlights the character's actual scaling and uses guide-backed signature sets", () => {
+  const furina = { name: "Furina", element: "Hydro", stats: {} } as Character;
+  const mavuika = { name: "Mavuika", element: "Pyro", stats: {} } as Character;
+  expect(essentialCombatStats(furina)).toEqual(["hp", "critRate_", "critDMG_"]);
+  expect(essentialCombatStats(mavuika)).toEqual([
+    "atk",
+    "critRate_",
+    "critDMG_",
+  ]);
+  expect(combatStatLayout(mavuika)).toMatchObject({
+    left: ["hp", "atk", "def", "eleMas", "enerRech_"],
+    right: ["critRate_", "critDMG_", "pyro_dmg_"],
+  });
+  expect(combatStatLayout({ name: "Eula", element: "Cryo" }).right.at(-1)).toBe(
+    "physical_dmg_",
+  );
+  expect(recommendBuild(furina, blankTeam).sets[0]).toBe("Golden Troupe");
+  expect(recommendBuild(mavuika, blankTeam)).toMatchObject({
+    sets: expect.arrayContaining([
+      "Obsidian Codex",
+      "Scroll of the Hero of Cinder City",
+    ]),
+    er: [],
+    guideUrl: "https://keqingmains.com/q/mavuika-quickguide/",
+  });
+  const raiden = {
+    name: "Raiden Shogun",
+    element: "Electro",
+    stats: {},
+  } as Character;
+  expect(
+    recommendBuild(raiden, {
+      ...blankTeam,
+      goal: { archetype: "Reaction team", reaction: "Hyperbloom" },
+    }).sets[0],
+  ).toBe("Flower of Paradise Lost");
 });

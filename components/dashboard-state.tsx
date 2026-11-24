@@ -2,30 +2,29 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { useBrowserState } from "@/lib/browser-state";
-import { isCharacter, record } from "@/lib/builds";
-import { parseGood, type Good } from "@/lib/good";
+import type { Good } from "@/lib/good";
 import type { Character, Profile } from "@/lib/model";
+import {
+  emptyRoster,
+  mergeRosterBackup,
+  mergedCharacters,
+  parseRoster,
+  withShowcase,
+  type Roster,
+} from "@/lib/roster";
 import { blankTeam, parseTeams, type Team } from "@/lib/teams";
 
-type LocalRoster = { manual: Character[]; imported: Character[]; good?: Good };
-const emptyRoster: LocalRoster = { manual: [], imported: [] };
 const noTeams: Team[] = [];
-const parseRoster = (value: unknown): LocalRoster | undefined => {
-  if (
-    !record(value) ||
-    !Array.isArray(value.manual) ||
-    !value.manual.every(isCharacter) ||
-    !Array.isArray(value.imported) ||
-    !value.imported.every(isCharacter) ||
-    (value.good !== undefined && !parseGood(value.good))
-  )
-    return;
-  return value as LocalRoster;
-};
+
+type WhatIf = { original: Character; variant: Character; team?: Team };
 
 type Dashboard = {
+  whatIf?: WhatIf;
+  setWhatIf: (build: WhatIf) => void;
   profile?: Profile;
-  setProfile: (profile: Profile) => void;
+  setProfile: (profile: Profile) => boolean;
+  roster: Roster;
+  importRoster: (incoming: Roster) => boolean;
   characters: Character[];
   good?: Good;
   importGood: (data: Good, imported: Character[]) => boolean;
@@ -38,7 +37,7 @@ type Dashboard = {
 const DashboardContext = createContext<Dashboard | null>(null);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const [profile, updateProfile] = useState<Profile>();
+  const [whatIf, setWhatIf] = useState<Dashboard["whatIf"]>();
   const [draft, setDraft] = useState(blankTeam);
   const [saved, setSaved] = useBrowserState(
     "genshin.teams.v1",
@@ -50,46 +49,34 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     emptyRoster,
     parseRoster,
   );
-  const characters = [
-    ...new Map(
-      [
-        ...roster.imported,
-        ...(profile?.characters ?? []),
-        ...roster.manual,
-      ].map((entry) => [entry.id, entry]),
-    ).values(),
-  ];
   return (
     <DashboardContext.Provider
       value={{
-        profile,
+        whatIf,
+        setWhatIf,
+        profile: roster.profile,
         setProfile: (next) =>
-          updateProfile((previous) =>
-            previous?.uid === next.uid
-              ? {
-                  ...next,
-                  characters: [
-                    ...new Map(
-                      [...previous.characters, ...next.characters].map(
-                        (entry) => [entry.id, entry],
-                      ),
-                    ).values(),
-                  ],
-                }
-              : next,
-          ),
-        characters,
+          setRoster((previous) => withShowcase(previous, next)),
+        characters: mergedCharacters(roster),
+        roster,
+        importRoster: (incoming) => {
+          return setRoster((previous) => {
+            const merged = parseRoster(mergeRosterBackup(previous, incoming));
+            if (!merged) throw new Error("Roster is too large.");
+            return merged;
+          });
+        },
         good: roster.good,
         importGood: (good, imported) =>
-          setRoster({ ...roster, good, imported }),
+          setRoster((previous) => ({ ...previous, good, imported })),
         addManual: (character) =>
-          setRoster({
-            ...roster,
+          setRoster((previous) => ({
+            ...previous,
             manual: [
-              ...roster.manual.filter((entry) => entry.id !== character.id),
+              ...previous.manual.filter((entry) => entry.id !== character.id),
               character,
             ],
-          }),
+          })),
         draft,
         setDraft,
         saved,

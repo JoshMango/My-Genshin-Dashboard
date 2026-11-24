@@ -36,8 +36,15 @@ export function useBrowserState<T>(
     }
   }, [raw, fallback, parse]);
   const write = useCallback(
-    (value: T) => {
+    (value: T | ((previous: T) => T)) => {
       try {
+        if (typeof value === "function") {
+          const raw = read();
+          const previous = raw
+            ? (parse(JSON.parse(raw)) ?? fallback)
+            : fallback;
+          value = (value as (previous: T) => T)(previous);
+        }
         localStorage.setItem(key, JSON.stringify(value));
         window.dispatchEvent(new Event(event));
         return true;
@@ -45,7 +52,7 @@ export function useBrowserState<T>(
         return false;
       }
     },
-    [key, event],
+    [key, event, read, parse, fallback],
   );
   return [value, write] as const;
 }

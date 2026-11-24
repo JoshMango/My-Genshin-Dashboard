@@ -25,6 +25,7 @@ import type { Character } from "@/lib/model";
 import { useDashboard } from "./dashboard-state";
 import { ElementBadge, GameIcon } from "./game-icon";
 import { useCatalog } from "./use-catalog";
+import { useOpenCharacter } from "./character-drawer";
 import { TeamRecommendations } from "./team-recommendations";
 
 export function TeamFeedback({ team }: { team: Team }) {
@@ -60,6 +61,7 @@ export function TeamFeedback({ team }: { team: Team }) {
 }
 
 export function TeamBuilder() {
+  const openCharacter = useOpenCharacter();
   const { characters, draft, setDraft, saved, setSaved } = useDashboard();
   const { catalog, failure, retry } = useCatalog();
   const [selected, setSelected] = useState<number | null>(null);
@@ -235,6 +237,14 @@ export function TeamBuilder() {
               </button>
               {character && (
                 <div className="slot-actions">
+                  <button
+                    type="button"
+                    className="quiet compact"
+                    onClick={() => openCharacter(character, draft)}
+                    aria-label={`Inspect ${character.name}`}
+                  >
+                    Details
+                  </button>
                   <ElementBadge element={character.element} />
                   <button
                     className="quiet compact"
@@ -394,12 +404,15 @@ export function TeamBuilder() {
               <div className="input-row">
                 {team.slots.flatMap((character) =>
                   character ? (
-                    <GameIcon
+                    <button
                       key={characterGroup(character.id)}
-                      src={character.icon}
-                      alt={character.name}
-                      size={40}
-                    />
+                      type="button"
+                      className="quiet"
+                      aria-label={`Inspect ${character.name}`}
+                      onClick={() => openCharacter(character, team)}
+                    >
+                      <GameIcon src={character.icon} alt="" size={40} />
+                    </button>
                   ) : (
                     []
                   ),
@@ -429,6 +442,9 @@ export function TeamBuilder() {
                 >
                   Duplicate
                 </button>
+                <Link href={`/compare?team=${encodeURIComponent(team.id)}`}>
+                  Open in Compare
+                </Link>
               </div>
               <label className="checkbox-label">
                 <input

@@ -1,0 +1,73 @@
+{
+  "Bennett": { "buffs": ["ATK", "Healing"], "energy": "high" },
+  "Furina": { "buffs": ["DMG Bonus", "HP changes"], "energy": "high" },
+  "Mavuika": { "field": "flex", "buffs": ["DMG Bonus"], "energy": "none" },
+  "Skirk": { "energy": "none" },
+  "Kaedehara Kazuha": {
+    "buffs": ["DMG Bonus", "RES Shred"],
+    "energy": "medium"
+  },
+  "Sucrose": { "buffs": ["EM", "RES Shred"], "energy": "medium" },
+  "Nahida": { "buffs": ["EM", "Dendro support"], "energy": "low" },
+  "Xilonen": { "buffs": ["RES Shred", "Healing"], "energy": "medium" },
+  "Xingqiu": { "buffs": ["Damage Reduction"], "energy": "high" },
+  "Yelan": { "buffs": ["DMG Bonus"], "energy": "high" },
+  "Zhongli": { "buffs": ["RES Shred", "Shield"], "energy": "low" },
+  "Raiden Shogun": {
+    "field": "flex",
+    "buffs": ["Energy", "Burst DMG"],
+    "energy": "high"
+  },
+  "Fischl": { "buffs": ["Energy"], "energy": "low" },
+  "Kuki Shinobu": { "buffs": ["Healing"], "energy": "low" },
+  "Kujou Sara": { "buffs": ["ATK"], "energy": "high" },
+  "Yun Jin": { "buffs": ["Normal Attack DMG"], "energy": "high" },
+  "Faruzan": { "buffs": ["RES Shred", "Anemo support"], "energy": "high" },
+  "Shenhe": { "buffs": ["RES Shred", "Cryo support"], "energy": "high" },
+  "Citlali": { "buffs": ["RES Shred", "Shield"], "energy": "high" },
+  "Ineffa": { "buffs": ["Shield"], "energy": "medium" },
+  "Lauma": { "buffs": ["RES Shred", "Lunar support"], "energy": "medium" },
+  "Columbina": {
+    "roles": ["offField", "buffer", "enabler"],
+    "buffs": ["Lunar support"],
+    "energy": "high"
+  },
+  "Nefer": { "roles": ["carry", "enabler"], "field": "on", "energy": "low" },
+  "Varka": { "roles": ["carry"], "field": "on", "energy": "medium" },
+  "Flins": { "roles": ["carry", "enabler"], "field": "on", "energy": "medium" },
+  "Zibai": { "roles": ["carry", "enabler"], "field": "on", "energy": "medium" },
+  "Nicole": {
+    "roles": ["buffer", "sustain", "enabler"],
+    "buffs": ["ATK", "Shield"],
+    "energy": "medium"
+  },
+  "Linnea": {
+    "roles": ["offField", "buffer", "enabler"],
+    "buffs": ["EM", "Lunar support"],
+    "energy": "medium"
+  },
+  "Illuga": {
+    "roles": ["offField", "buffer", "enabler"],
+    "buffs": ["Lunar support"],
+    "energy": "high"
+  },
+  "Sandrone": { "roles": ["carry"], "field": "on", "energy": "medium" },
+  "Lohen": { "roles": ["carry", "enabler"], "field": "on", "energy": "medium" },
+  "Vesna": { "roles": ["carry", "enabler"], "field": "on", "energy": "medium" },
+  "Vodyanitsa": {
+    "roles": ["offField", "buffer", "enabler"],
+    "energy": "medium"
+  },
+  "Durin": { "roles": ["offField", "buffer", "enabler"], "energy": "medium" },
+  "Jahoda": { "roles": ["sustain", "enabler"], "energy": "medium" },
+  "Ifa": { "roles": ["sustain", "buffer", "enabler"], "energy": "low" },
+  "Yumemizuki Mizuki": {
+    "roles": ["sustain", "buffer", "enabler"],
+    "energy": "medium"
+  },
+  "Dahlia": {
+    "roles": ["sustain", "buffer"],
+    "buffs": ["Shield", "Attack Speed"],
+    "energy": "high"
+  }
+}

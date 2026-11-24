@@ -1,4 +1,5 @@
 import rolesByName from "@/data/roles.json";
+import tagOverrides from "@/data/character-tags.json";
 import config from "@/data/archetypes.json";
 import { characterGroup, isCharacter, record } from "./builds";
 import { elements, type Character, type Element } from "./model";
@@ -37,6 +38,11 @@ export const blankTeam: Team = {
 };
 
 export function characterRoles(character: Pick<Character, "name">): Role[] {
+  const overrides = tagOverrides as Partial<Record<string, { roles?: Role[] }>>;
+  if (Object.hasOwn(overrides, character.name)) {
+    const assigned = overrides[character.name]?.roles;
+    if (assigned) return assigned;
+  }
   const table: Partial<Record<string, Role[]>> = rolesByName as Partial<
     Record<string, Role[]>
   >;

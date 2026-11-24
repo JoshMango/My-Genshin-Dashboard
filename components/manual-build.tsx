@@ -54,32 +54,17 @@ function numberFrom(data: FormData, key: string, fallback: number) {
 }
 
 export function ManualBuild() {
-  const [opened, setOpened] = useState(false);
-  const { catalog, failure, retry } = useCatalog(opened);
+  const { catalog, failure, retry } = useCatalog();
+  if (catalog) return <BuildForm catalog={catalog} />;
   return (
-    <details
-      className="panel import-panel"
-      onToggle={(event) => {
-        if (event.currentTarget.open) setOpened(true);
-      }}
-    >
-      <summary>
-        <strong>Manual build</strong>
-      </summary>
-      {opened &&
-        (catalog ? (
-          <BuildForm catalog={catalog} />
-        ) : (
-          <p className="muted">
-            {failure || "Loading game catalog…"}{" "}
-            {failure && (
-              <button type="button" className="quiet" onClick={retry}>
-                Retry
-              </button>
-            )}
-          </p>
-        ))}
-    </details>
+    <p className="muted">
+      {failure || "Loading game catalog…"}{" "}
+      {failure && (
+        <button type="button" className="quiet" onClick={retry}>
+          Retry
+        </button>
+      )}
+    </p>
   );
 }
 

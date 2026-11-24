@@ -36,8 +36,12 @@ export default function AboutPage() {
           documents the combat mechanics used by the estimator.
         </li>
         <li>
-          <a href="https://gcsim.app/">gcsim</a> provides full rotation
-          simulation and is planned for a later browser integration.
+          <a href="https://gcsim.app/">gcsim</a> powers browser-based rotation
+          simulation.
+        </li>
+        <li>
+          <a href="https://akasha.cv/">Akasha.cv</a> is linked from loaded
+          profiles for showcase leaderboards.
         </li>
       </ul>
       <p>
