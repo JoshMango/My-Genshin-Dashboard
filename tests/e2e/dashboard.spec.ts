@@ -509,7 +509,15 @@ test("highlights active artifact sets in the character header", async ({
 }) => {
   await stubCatalog(page);
   const golden = "Golden Troupe";
-  const tenacity = "Tenacity of the Millelith";
+  const instructor = "Instructor";
+  const berserker = "Berserker";
+  const adventurer = "Adventurer";
+  const setRarities: Record<string, number> = {
+    [golden]: 5,
+    [instructor]: 4,
+    [berserker]: 3,
+    [adventurer]: 2,
+  };
   const mixed = [
     "Blizzard Strayer",
     "Noblesse Oblige",
@@ -526,14 +534,14 @@ test("highlights active artifact sets in the character header", async ({
     {
       id: "10000003",
       name: "Jean",
-      equipped: [golden, golden, tenacity, tenacity, mixed[0]],
-      active: [golden, tenacity],
+      equipped: [golden, golden, instructor, instructor, mixed[0]],
+      active: [golden, instructor],
     },
     {
       id: "10000032",
       name: "Bennett",
-      equipped: [tenacity, tenacity, ...mixed.slice(0, 3)],
-      active: [tenacity],
+      equipped: [berserker, berserker, adventurer, adventurer, mixed[0]],
+      active: [berserker, adventurer],
     },
     { id: "10000002", name: "Kamisato Ayaka", equipped: mixed, active: [] },
   ];
@@ -553,7 +561,7 @@ test("highlights active artifact sets in the character header", async ({
       id: `${id}-${i}`,
       setName,
       slot: slots[i],
-      rarity: 5,
+      rarity: setRarities[setName] ?? 5,
       level: 20,
       icon: `https://enka.network/ui/UI_RelicIcon_${setName === golden ? 15032 : 15017}_${i + 1}.png`,
       main: { key: "hp", value: 4780 },
@@ -582,6 +590,50 @@ test("highlights active artifact sets in the character header", async ({
     const bonuses = panel.locator(".set-bonuses");
     await expect(summary.locator("strong")).toHaveText(active);
     await expect(summary.locator("img")).toHaveCount(active.length);
+    const icons = summary.locator(".equipped-set-icon");
+    for (const [index, setName] of active.entries()) {
+      const rarity = setRarities[setName];
+      const icon = icons.nth(index);
+      await expect(icon).toHaveAttribute("data-rarity", String(rarity));
+      const glow = () =>
+        icon.evaluate((element) => {
+          const style = getComputedStyle(element, "::before");
+          return {
+            animation: style.animationName,
+            gradient: style.backgroundImage,
+          };
+        });
+      const glowColors: Record<number, string> = {
+        5: "244, 200, 117",
+        4: "182, 139, 230",
+        3: "121, 183, 232",
+      };
+      const normal = await glow();
+      expect(normal.animation).toBe(
+        rarity === 5 ? "weapon-gold-drift" : "none",
+      );
+      expect(normal.gradient).toContain(glowColors[rarity] ?? "none");
+
+      if (rarity === 5) {
+        if (
+          await page.evaluate(
+            () => matchMedia("(hover: hover) and (pointer: fine)").matches,
+          )
+        ) {
+          await icon.hover();
+          await expect(icon.locator("img")).toHaveCSS(
+            "animation-name",
+            "character-art-float",
+          );
+        }
+        await page.emulateMedia({ reducedMotion: "reduce" });
+        await expect
+          .poll(glow)
+          .toEqual({ animation: "none", gradient: normal.gradient });
+        await expect(icon.locator("img")).toHaveCSS("animation-name", "none");
+        await page.emulateMedia({ reducedMotion: "no-preference" });
+      }
+    }
     await expect(bonuses.getByText("2-piece active")).toHaveCount(
       active.length,
     );

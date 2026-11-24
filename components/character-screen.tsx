@@ -167,10 +167,19 @@ export function CharacterDetails({
               >
                 <div className="equipped-set-icons" aria-hidden="true">
                   {activeSets.map(([name, pieces]) => {
-                    const icon =
-                      pieces.find((piece) => piece.slot === "Flower")?.icon ??
-                      pieces.find((piece) => piece.icon)?.icon;
-                    return <GameIcon key={name} src={icon} alt="" size={80} />;
+                    const piece =
+                      pieces.find(
+                        (piece) => piece.slot === "Flower" && piece.icon,
+                      ) ?? pieces.find((piece) => piece.icon);
+                    return (
+                      <span
+                        key={name}
+                        className="equipped-set-icon"
+                        data-rarity={piece?.rarity}
+                      >
+                        <GameIcon src={piece?.icon} alt="" size={80} />
+                      </span>
+                    );
                   })}
                 </div>
                 <div className="equipped-set-names">

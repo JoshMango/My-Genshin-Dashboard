@@ -583,18 +583,53 @@ button.quiet,
   align-items: center;
   flex: none;
 }
-.equipped-set-icons > * {
+.equipped-set-icon {
+  position: relative;
+  isolation: isolate;
   width: 5rem;
   height: 5rem;
+}
+.equipped-set-icon > * {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 0.25rem 0.4rem #050915a8);
 }
-.equipped-set-summary[data-split="true"] .equipped-set-icons > * {
+.equipped-set-summary[data-split="true"] .equipped-set-icon {
   width: 4.25rem;
   height: 4.25rem;
 }
-.equipped-set-icons > * + * {
+.equipped-set-icon + .equipped-set-icon {
   margin-inline-start: -1.25rem;
+}
+.equipped-set-icon::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -8%;
+  background: radial-gradient(circle, var(--set-icon-glow), transparent 72%);
+  pointer-events: none;
+}
+.equipped-set-icon[data-rarity="5"] {
+  --set-icon-glow: #f4c875b5;
+}
+.equipped-set-icon[data-rarity="4"] {
+  --set-icon-glow: #b68be695;
+}
+.equipped-set-icon[data-rarity="3"] {
+  --set-icon-glow: #79b7e866;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-motion="on"] .equipped-set-icon[data-rarity="5"]::before {
+    animation: weapon-gold-drift 4.5s ease-in-out infinite alternate;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  :root[data-motion="on"] .equipped-set-icon[data-rarity="5"]:hover > img {
+    animation: character-art-float 4s ease-in-out infinite alternate;
+  }
 }
 .equipped-set-names {
   display: grid;
