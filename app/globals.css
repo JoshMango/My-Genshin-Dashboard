@@ -1937,6 +1937,9 @@ html:has(.roster-welcome[open]) {
     transform: translateY(0);
   }
 }
+html:has(.character-drawer[open]) {
+  overflow: hidden;
+}
 .character-drawer {
   position: fixed;
   inset: 0 0 0 auto;
@@ -1973,9 +1976,15 @@ html:has(.roster-welcome[open]) {
   gap: 1rem;
   min-width: 0;
 }
-.drawer-layout > .character-detail {
+.drawer-details {
   min-width: 0;
+}
+.drawer-details > .character-detail {
   margin-top: 0;
+}
+.drawer-editor {
+  margin-bottom: 1rem;
+  scroll-margin-block-start: 4.5rem;
 }
 .drawer-portrait {
   display: grid;
@@ -2050,20 +2059,41 @@ html:has(.roster-welcome[open]) {
   max-width: 5rem;
   max-height: 5rem;
 }
-@media (min-width: 50rem) {
+@media (min-width: 50rem) and (min-height: 30rem) {
+  .character-drawer {
+    overflow: clip;
+  }
+  .drawer-content {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100%;
+  }
+  .drawer-toolbar {
+    position: static;
+  }
   .drawer-layout {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .drawer-details {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+  .drawer-editor {
+    scroll-margin-block-start: 0;
+  }
+  .drawer-portrait {
+    display: flex;
+    flex-direction: column;
   }
   .drawer-art {
     --art-scale: 1.72;
     height: clamp(15rem, 62dvh, 36rem);
+    min-height: 0;
   }
-}
-@media (min-width: 50rem) and (min-height: 46rem) {
-  .drawer-portrait {
-    position: sticky;
-    top: 4.5rem;
+  .drawer-lore {
+    flex: none;
   }
 }
 @media (prefers-reduced-motion: no-preference) {

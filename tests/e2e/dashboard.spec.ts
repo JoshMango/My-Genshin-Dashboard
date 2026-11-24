@@ -315,7 +315,7 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
         .querySelector('[role="tablist"]')
         ?.getBoundingClientRect();
       if (!art || !details) return false;
-      return matchMedia("(min-width: 50rem)").matches
+      return matchMedia("(min-width: 50rem) and (min-height: 30rem)").matches
         ? art.right < details.left
         : art.bottom < details.top;
     }),
@@ -385,6 +385,66 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await expect(drawer.locator(".passive-talents details")).toHaveCount(4);
   await drawer.getByText("Additional passive", { exact: true }).click();
   await expect(drawer.getByText("An extra passive effect.")).toBeVisible();
+
+  const buildDetails = drawer.getByRole("region", { name: "Build details" });
+  const portrait = drawer.locator(".drawer-portrait");
+  const closeDetails = drawer.getByRole("button", { name: "Close details" });
+  if (
+    await page.evaluate(
+      () => matchMedia("(min-width: 50rem) and (min-height: 30rem)").matches,
+    )
+  ) {
+    await buildDetails.evaluate((element) => {
+      element.scrollTop = 0;
+    });
+    const [portraitTop, toolbarTop] = await Promise.all([
+      portrait.evaluate((element) => element.getBoundingClientRect().top),
+      closeDetails.evaluate((element) => element.getBoundingClientRect().top),
+    ]);
+    await buildDetails.hover();
+    await page.mouse.wheel(0, 300);
+    await expect
+      .poll(() => buildDetails.evaluate((element) => element.scrollTop))
+      .toBeGreaterThan(0);
+    const detailsScroll = await buildDetails.evaluate(
+      (element) => element.scrollTop,
+    );
+    await portrait.hover();
+    await page.mouse.wheel(0, 300);
+    expect(await buildDetails.evaluate((element) => element.scrollTop)).toBe(
+      detailsScroll,
+    );
+    expect(await drawer.evaluate((element) => element.scrollTop)).toBe(0);
+    expect(
+      await portrait.evaluate((element) => element.getBoundingClientRect().top),
+    ).toBeCloseTo(portraitTop);
+    expect(
+      await closeDetails.evaluate(
+        (element) => element.getBoundingClientRect().top,
+      ),
+    ).toBeCloseTo(toolbarTop);
+  } else {
+    await drawer.evaluate((element) => {
+      element.scrollTop = 0;
+    });
+    const top = await portrait.evaluate(
+      (element) => element.getBoundingClientRect().top,
+    );
+    await drawer.evaluate((element) => {
+      element.scrollTop = 300;
+    });
+    expect(
+      await portrait.evaluate((element) => element.getBoundingClientRect().top),
+    ).toBeLessThan(top);
+    expect(await buildDetails.evaluate((element) => element.scrollTop)).toBe(0);
+  }
+  await drawer.getByRole("button", { name: "Edit build" }).click();
+  await expect(
+    buildDetails.getByRole("heading", { name: "Edit build" }),
+  ).toBeInViewport();
+  await expect(
+    buildDetails.getByRole("button", { name: "Compare this build" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Close details" }).click();
   await page.getByRole("link", { name: "Teams", exact: true }).click();
   await page.getByRole("button", { name: "Choose slot 1" }).click();

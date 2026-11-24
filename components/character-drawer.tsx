@@ -52,6 +52,7 @@ function Drawer({
   close: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const editor = useRef<HTMLElement>(null);
   const [editing, edit] = useState(false);
   const [variant, setVariant] = useState(character);
   const [lore, setLore] = useState<Awaited<
@@ -64,6 +65,9 @@ function Drawer({
     const element = dialog.current;
     if (element && !element.open) element.showModal();
   }, []);
+  useEffect(() => {
+    if (editing) editor.current?.scrollIntoView({ block: "start" });
+  }, [editing]);
   useEffect(() => {
     let current = true;
     void loadCharacterLore(character).then((bio) => {
@@ -102,39 +106,6 @@ function Drawer({
             Edit build
           </button>
         </div>
-        {editing && (
-          <section className="panel stack">
-            <h2>Edit build</h2>
-            {catalog ? (
-              <>
-                <GearEditor
-                  catalog={catalog}
-                  character={variant}
-                  update={setVariant}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setWhatIf({ original: character, variant, team });
-                    dialog.current?.close();
-                    router.push("/compare?build=1");
-                  }}
-                >
-                  Compare this build
-                </button>
-              </>
-            ) : (
-              <p role="status">
-                {failure || "Loading game catalog…"}{" "}
-                {failure && (
-                  <button type="button" className="quiet" onClick={retry}>
-                    Retry
-                  </button>
-                )}
-              </p>
-            )}
-          </section>
-        )}
         <div className="drawer-layout">
           <div className="drawer-portrait">
             <div className="drawer-art" data-rarity={character.rarity}>
@@ -159,7 +130,47 @@ function Drawer({
               </p>
             </section>
           </div>
-          <CharacterDetails character={variant} team={team} compact />
+          <div
+            className="drawer-details"
+            role="region"
+            aria-label="Build details"
+            tabIndex={0}
+          >
+            {editing && (
+              <section className="panel stack drawer-editor" ref={editor}>
+                <h2>Edit build</h2>
+                {catalog ? (
+                  <>
+                    <GearEditor
+                      catalog={catalog}
+                      character={variant}
+                      update={setVariant}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWhatIf({ original: character, variant, team });
+                        dialog.current?.close();
+                        router.push("/compare?build=1");
+                      }}
+                    >
+                      Compare this build
+                    </button>
+                  </>
+                ) : (
+                  <p role="status">
+                    {failure || "Loading game catalog…"}{" "}
+                    {failure && (
+                      <button type="button" className="quiet" onClick={retry}>
+                        Retry
+                      </button>
+                    )}
+                  </p>
+                )}
+              </section>
+            )}
+            <CharacterDetails character={variant} team={team} compact />
+          </div>
         </div>
       </div>
     </dialog>
