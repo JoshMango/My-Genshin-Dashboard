@@ -86,7 +86,7 @@ export function CharacterDetails({
 
   const equippedSets = new Map<string, Character["artifacts"]>();
   for (const item of character.artifacts) {
-    if (!item.setId && item.setName === "Unknown set") continue;
+    if (item.setName === "Unknown set") continue;
     const pieces = equippedSets.get(item.setName) ?? [];
     pieces.push(item);
     equippedSets.set(item.setName, pieces);
@@ -158,7 +158,31 @@ export function CharacterDetails({
           aria-labelledby={`${panelId}-tab-${tab}`}
           tabIndex={0}
         >
-          {tab !== 0 && identity}
+          {tab === 1 && activeSets.length > 0 ? (
+            <div className="detail-loadout">
+              {identity}
+              <div
+                className="equipped-set-summary"
+                data-split={activeSets.length === 2}
+              >
+                <div className="equipped-set-icons" aria-hidden="true">
+                  {activeSets.map(([name, pieces]) => {
+                    const icon =
+                      pieces.find((piece) => piece.slot === "Flower")?.icon ??
+                      pieces.find((piece) => piece.icon)?.icon;
+                    return <GameIcon key={name} src={icon} alt="" size={80} />;
+                  })}
+                </div>
+                <div className="equipped-set-names">
+                  {activeSets.map(([name]) => (
+                    <strong key={name}>{name}</strong>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : tab !== 0 ? (
+            identity
+          ) : null}
           {tab === 0 && (
             <>
               <div className={compact ? undefined : "character-overview"}>
@@ -201,10 +225,7 @@ export function CharacterDetails({
                 <div className="set-bonuses">
                   {activeSets.map(([name, pieces]) => (
                     <div key={name}>
-                      <div className="item-heading">
-                        <GameIcon src={pieces[0].icon} alt="" size={36} />
-                        <strong>{name}</strong>
-                      </div>
+                      {activeSets.length > 1 && <strong>{name}</strong>}
                       <p>
                         <span className="bonus-label">2-piece active</span>{" "}
                         {details?.sets[name]?.effect2Pc}

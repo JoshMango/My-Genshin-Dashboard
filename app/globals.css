@@ -571,6 +571,42 @@ button.quiet,
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.equipped-set-summary {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  gap: 0.65rem;
+  max-width: min(100%, 18rem);
+}
+.equipped-set-icons {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+.equipped-set-icons > * {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  filter: drop-shadow(0 0.25rem 0.4rem #050915a8);
+}
+.equipped-set-summary[data-split="true"] .equipped-set-icons > * {
+  width: 4.25rem;
+  height: 4.25rem;
+}
+.equipped-set-icons > * + * {
+  margin-inline-start: -1.25rem;
+}
+.equipped-set-names {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--accent);
+  font-size: 1.3rem;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+.equipped-set-summary[data-split="true"] .equipped-set-names {
+  font-size: 1.1rem;
+}
 .weapon-disclosure {
   position: relative;
   flex: 0 1 15.5rem;

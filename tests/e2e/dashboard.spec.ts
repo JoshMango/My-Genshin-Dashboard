@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { slots, type Character } from "../../lib/model";
 
 const avatar = (
   id: number,
@@ -98,6 +99,10 @@ const data: Record<string, unknown> = {
   "mistsplitterreforged.json": {
     effectName: "Mistsplitter's Edge",
     r1: { description: "Gain a 12% Elemental DMG Bonus." },
+  },
+  "artifacts/goldentroupe.json": {
+    effect2Pc: "Increases Elemental Skill DMG by 20%.",
+    effect4Pc: "Increases Elemental Skill DMG by 25%.",
   },
 };
 
@@ -495,6 +500,110 @@ test("recovers missing weapon stats on saved showcase builds without a UID refre
     const stats = page.locator(".weapon-passive .weapon-stats");
     await expect(stats.locator("dt")).toHaveText([...labels]);
     await expect(stats.locator("dd")).toHaveText([...values]);
+    await page.getByRole("button", { name: "Close details" }).click();
+  }
+});
+
+test("highlights active artifact sets in the character header", async ({
+  page,
+}) => {
+  await stubCatalog(page);
+  const golden = "Golden Troupe";
+  const tenacity = "Tenacity of the Millelith";
+  const mixed = [
+    "Blizzard Strayer",
+    "Noblesse Oblige",
+    "Gladiator's Finale",
+    "Emblem of Severed Fate",
+  ];
+  const builds = [
+    {
+      id: "10000089",
+      name: "Furina",
+      equipped: [golden, golden, golden, golden, mixed[0]],
+      active: [golden],
+    },
+    {
+      id: "10000003",
+      name: "Jean",
+      equipped: [golden, golden, tenacity, tenacity, mixed[0]],
+      active: [golden, tenacity],
+    },
+    {
+      id: "10000032",
+      name: "Bennett",
+      equipped: [tenacity, tenacity, ...mixed.slice(0, 3)],
+      active: [tenacity],
+    },
+    { id: "10000002", name: "Kamisato Ayaka", equipped: mixed, active: [] },
+  ];
+  const characters: Character[] = builds.map(({ id, name, equipped }) => ({
+    id,
+    name,
+    rarity: 5,
+    level: 90,
+    ascension: 6,
+    constellation: 0,
+    source: "showcase",
+    stats: {},
+    base: {},
+    talents: [],
+    constellations: [],
+    artifacts: equipped.map((setName, i) => ({
+      id: `${id}-${i}`,
+      setName,
+      slot: slots[i],
+      rarity: 5,
+      level: 20,
+      icon: `https://enka.network/ui/UI_RelicIcon_${setName === golden ? 15032 : 15017}_${i + 1}.png`,
+      main: { key: "hp", value: 4780 },
+      substats: [],
+    })),
+  }));
+  await page.addInitScript((characters) => {
+    localStorage.setItem(
+      "genshin.roster.v1",
+      JSON.stringify({
+        manual: [],
+        imported: [],
+        profile: { uid: "618285856", characters },
+      }),
+    );
+  }, characters);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Got it" }).click();
+
+  for (const { name, active } of builds) {
+    await page.getByRole("button", { name: new RegExp(name) }).click();
+    const summary = page.locator(".equipped-set-summary");
+    await expect(summary).toHaveCount(0);
+    await page.getByRole("tab", { name: "Artifacts" }).click();
+    const panel = page.getByRole("tabpanel", { name: "Artifacts" });
+    const bonuses = panel.locator(".set-bonuses");
+    await expect(summary.locator("strong")).toHaveText(active);
+    await expect(summary.locator("img")).toHaveCount(active.length);
+    await expect(bonuses.getByText("2-piece active")).toHaveCount(
+      active.length,
+    );
+    await expect(bonuses.getByText("4-piece active")).toHaveCount(
+      name === "Furina" ? 1 : 0,
+    );
+    if (name === "Furina") {
+      await expect(
+        bonuses.getByText("Increases Elemental Skill DMG by 25%."),
+      ).toBeVisible();
+    }
+    if (active.length === 2) {
+      await expect(summary).toHaveAttribute("data-split", "true");
+      const [first, second] = await summary
+        .locator("img")
+        .evaluateAll((icons) =>
+          icons.map((icon) => icon.getBoundingClientRect().toJSON()),
+        );
+      expect(second.left).toBeGreaterThan(first.left);
+      expect(second.left).toBeLessThan(first.right);
+    }
+    if (active.length === 0) await expect(summary).toHaveCount(0);
     await page.getByRole("button", { name: "Close details" }).click();
   }
 });
