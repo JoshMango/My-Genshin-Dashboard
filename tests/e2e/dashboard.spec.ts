@@ -1,11 +1,17 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const avatar = (id: number, element: string, hash: number, dex: string) => ({
+const avatar = (
+  id: number,
+  element: string,
+  hash: number,
+  dex: string,
+  quality = "QUALITY_ORANGE",
+) => ({
   [id]: {
     Element: element,
     NameTextMapHash: hash,
     SideIconName: `/ui/UI_AvatarIcon_Side_${dex}.png`,
-    QualityType: "QUALITY_ORANGE",
+    QualityType: quality,
     WeaponType: "WEAPON_SWORD_ONE_HAND",
     SkillOrder: [11, 12, 13],
     Skills: {},
@@ -20,7 +26,7 @@ const data: Record<string, unknown> = {
     ...avatar(10000032, "Fire", 3, "Bennett"),
     ...avatar(10000073, "Grass", 6, "Nahida"),
     ...avatar(10000025, "Water", 7, "Xingqiu"),
-    ...avatar(10000065, "Electric", 8, "Shinobu"),
+    ...avatar(10000065, "Electric", 8, "Shinobu", "QUALITY_PURPLE"),
   },
   "weapons.json": {},
   "relics.json": {
@@ -53,6 +59,19 @@ const data: Record<string, unknown> = {
   "affixes.json": {},
   "curves.json": {},
   "relic_levels.json": {},
+  "characters/kamisatoayaka.json": {
+    title: "Frostflake Heron",
+    description: "An Inazuman swordswoman from the Kamisato Clan.",
+  },
+  "talents/kamisatoayaka.json": {
+    passive1: { name: "First ascension passive" },
+    passive2: { name: "Fourth ascension passive" },
+    passive3: { name: "Utility passive" },
+    passive4: {
+      name: "Additional passive",
+      description: "An extra passive effect.",
+    },
+  },
   "mistsplitterreforged.json": {
     effectName: "Mistsplitter's Edge",
     r1: { description: "Gain a 12% Elemental DMG Bonus." },
@@ -61,10 +80,10 @@ const data: Record<string, unknown> = {
 
 async function stubCatalog(page: Page) {
   await page.route("https://raw.githubusercontent.com/**", async (route) => {
-    const file =
-      new URL(route.request().url()).pathname.split("/").at(-1) ?? "";
+    const parts = new URL(route.request().url()).pathname.split("/");
+    const file = parts.at(-1) ?? "";
     await route.fulfill({
-      json: data[file] ?? {},
+      json: data[parts.slice(-2).join("/")] ?? data[file] ?? {},
       headers: { "access-control-allow-origin": "*" },
     });
   });
@@ -112,6 +131,10 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
                   nameTextMapHash: "11",
                   rankLevel: 5,
                   icon: "UI_EquipIcon_Sword_Narukami",
+                  weaponStats: [
+                    { mainPropId: "FIGHT_PROP_BASE_ATTACK", statValue: 674 },
+                    { mainPropId: "FIGHT_PROP_CRITICAL_HURT", statValue: 44.1 },
+                  ],
                 },
               },
               {
@@ -136,7 +159,7 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
           },
           {
             avatarId: 10000003,
-            propMap: { "4001": { val: "90" } },
+            propMap: { "4001": { val: "91" } },
             fightPropMap: { "2001": 1150 },
           },
         ],
@@ -146,8 +169,8 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await page.goto("/");
   const links = page.getByRole("navigation", { name: "Profile links" });
   await expect(links).toHaveCount(0);
-  const welcome = page.getByRole("dialog", {
-    name: "Welcome to Genshin Dashboard",
+  const welcome = page.getByRole("dialog").filter({
+    has: page.getByRole("button", { name: "Got it", exact: true }),
   });
   await expect(welcome).toBeVisible();
   await expect(welcome.getByRole("button", { name: "Got it" })).toBeFocused();
@@ -184,14 +207,55 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
     await enka.hover();
     await expect(enka).toHaveCSS("translate", "0px -3px");
   }
-  await page.getByRole("button", { name: /Kamisato Ayaka/ }).click();
+  const ayaka = page.getByRole("button", { name: /Kamisato Ayaka/ });
+  const baseLevel = ayaka.getByText("Lv. 90", { exact: true });
+  await expect(baseLevel).toBeVisible();
+  await expect(baseLevel).not.toHaveAttribute("data-high-level", "");
+  const highLevel = page
+    .getByRole("button", { name: /Jean.*Showcase/ })
+    .getByText("Lv. 91", { exact: true });
+  await expect(highLevel).toHaveCSS("color", "rgb(243, 201, 118)");
+  const ayakaCard = page.locator(".character-card").filter({ has: ayaka });
+  const rosterWeapon = ayakaCard.locator(".roster-weapon");
+  await expect(
+    rosterWeapon.getByRole("img", { name: "Mistsplitter Reforged" }),
+  ).toBeVisible();
+  await expect(rosterWeapon).toHaveAttribute("data-rarity", "5");
+  await expect(
+    ayakaCard
+      .locator(".roster-artifact-icons")
+      .getByRole("img", { name: "Blizzard Strayer Flower" }),
+  ).toBeVisible();
+  await expect
+    .poll(() =>
+      rosterWeapon.evaluate(
+        (tile) => getComputedStyle(tile, "::before").animationName,
+      ),
+    )
+    .toBe("weapon-gold-drift");
+  await expect(
+    ayaka.getByRole("img", { name: "5-star rarity" }).locator("svg"),
+  ).toHaveCount(5);
+  await ayaka.click();
   await expect(
     page
       .getByRole("dialog", { name: /Kamisato Ayaka/ })
-      .getByRole("heading", { name: "Kamisato Ayaka" }),
+      .getByRole("heading", { name: "Kamisato Ayaka", exact: true }),
   ).toBeVisible();
   const drawer = page.getByRole("dialog", { name: /Kamisato Ayaka/ });
   await expect(drawer).toBeVisible();
+  await expect(
+    drawer.getByRole("heading", { name: "About Kamisato Ayaka" }),
+  ).toBeVisible();
+  await expect(
+    drawer.getByText("An Inazuman swordswoman from the Kamisato Clan."),
+  ).toBeVisible();
+  await expect(
+    drawer
+      .locator(".detail-identity")
+      .getByRole("img", { name: "5-star rarity" })
+      .locator("svg"),
+  ).toHaveCount(5);
   const art = drawer.getByRole("img", { name: "Kamisato Ayaka splash art" });
   await expect(art).toHaveAttribute("src", /UI_Gacha_AvatarImg_Ayaka\.png$/);
   await expect(drawer.locator(".drawer-art")).toHaveAttribute(
@@ -242,6 +306,9 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
     await weapon.tap();
   }
   await expect(passive).toBeVisible();
+  const weaponStats = drawer.locator(".weapon-passive .weapon-stats");
+  await expect(weaponStats.locator("dt")).toHaveText(["Base ATK", "CRIT DMG"]);
+  await expect(weaponStats.locator("dd")).toHaveText(["674", "44.1%"]);
   await weapon.press("Escape");
   await expect(passive).toBeHidden();
   await expect(drawer).toBeVisible();
@@ -269,6 +336,9 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   );
   await page.getByRole("tab", { name: "Talents" }).click();
   await expect(page.getByText("Elemental Burst · Lv. 9")).toBeVisible();
+  await expect(drawer.locator(".passive-talents details")).toHaveCount(4);
+  await drawer.getByText("Additional passive", { exact: true }).click();
+  await expect(drawer.getByText("An extra passive effect.")).toBeVisible();
   await page.getByRole("button", { name: "Close details" }).click();
   await page.getByRole("link", { name: "Teams", exact: true }).click();
   await page.getByRole("button", { name: "Choose slot 1" }).click();
@@ -328,7 +398,9 @@ test("handles empty and rate-limited showcases, and persists accessible themes",
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.keyboard.press("Escape");
   await expect(
-    page.getByRole("dialog", { name: "Welcome to Genshin Dashboard" }),
+    page.getByRole("dialog").filter({
+      has: page.getByRole("button", { name: "Got it", exact: true }),
+    }),
   ).toBeHidden();
   await expect(
     page.getByRole("heading", { name: "Character roster" }),
@@ -539,6 +611,19 @@ test("discovers a Hyperbloom team from the owned roster and sends it to Compare"
   await expect(
     page.getByRole("button", { name: /Nahida.*Showcase/ }),
   ).toBeVisible();
+  const shinobu = page.getByRole("button", { name: /Kuki Shinobu.*Showcase/ });
+  await expect(
+    shinobu.getByRole("img", { name: "4-star rarity" }).locator("svg"),
+  ).toHaveCount(4);
+  await shinobu.click();
+  const shinobuDrawer = page.getByRole("dialog", { name: /Kuki Shinobu/ });
+  await expect(
+    shinobuDrawer
+      .locator(".detail-identity")
+      .getByRole("img", { name: "4-star rarity" })
+      .locator("svg"),
+  ).toHaveCount(4);
+  await shinobuDrawer.getByRole("button", { name: "Close details" }).click();
   await page.getByRole("link", { name: "Teams", exact: true }).click();
   await page.getByRole("link", { name: "Discover", exact: true }).click();
   await expect(

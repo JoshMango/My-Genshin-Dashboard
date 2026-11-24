@@ -3,6 +3,7 @@
 import type { Character } from "@/lib/model";
 import { useOpenCharacter } from "./character-drawer";
 import { ElementBadge, GameIcon } from "./game-icon";
+import { RarityStars } from "./rarity-stars";
 
 export function CharacterCard({ character }: { character: Character }) {
   const open = useOpenCharacter();
@@ -23,8 +24,18 @@ export function CharacterCard({ character }: { character: Character }) {
         </div>
         <div className="character-caption">
           <h3>{character.name}</h3>
-          <span>
-            Lv. {character.level} · C{character.constellation}
+          {(character.rarity === 4 || character.rarity === 5) && (
+            <RarityStars rarity={character.rarity} />
+          )}
+          <span className="character-level">
+            <strong
+              data-high-level={
+                character.level >= 91 && character.level <= 100 ? "" : undefined
+              }
+            >
+              Lv. {character.level}
+            </strong>{" "}
+            · C{character.constellation}
           </span>
           <span className="source-badge">
             {character.source === "showcase"
@@ -36,19 +47,35 @@ export function CharacterCard({ character }: { character: Character }) {
         </div>
       </button>
       <div className="gear-icons">
-        <GameIcon
-          src={character.weapon?.icon}
-          alt={character.weapon?.name ?? "Weapon unavailable"}
-          size={28}
-        />
-        {character.artifacts.map((artifact) => (
-          <GameIcon
-            key={artifact.id}
-            src={artifact.icon}
-            alt={`${artifact.setName} ${artifact.slot}`}
-            size={25}
-          />
-        ))}
+        <div className="roster-weapon-group">
+          <span className="roster-gear-label">Weapon</span>
+          <span
+            className="roster-weapon weapon-rarity"
+            data-rarity={character.weapon?.rarity}
+            title={character.weapon?.name}
+          >
+            <GameIcon
+              src={character.weapon?.icon}
+              alt={character.weapon?.name ?? "Weapon unavailable"}
+              size={31}
+            />
+          </span>
+        </div>
+        {character.artifacts.length > 0 && (
+          <div className="roster-artifact-group">
+            <span className="roster-gear-label">Artifacts</span>
+            <div className="roster-artifact-icons">
+              {character.artifacts.map((artifact) => (
+                <GameIcon
+                  key={artifact.id}
+                  src={artifact.icon}
+                  alt={`${artifact.setName} ${artifact.slot}`}
+                  size={21}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </article>
   );

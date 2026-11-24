@@ -3,7 +3,10 @@ import type { Character, Slot } from "@/lib/model";
 const base =
   "https://raw.githubusercontent.com/theBowja/genshin-db/8e5badd60b5d894284ccc927a56c9683529d2592/src/data/English";
 type Text = { name?: string; description?: string };
-type Talents = { combat1?: Text; combat2?: Text; combat3?: Text };
+type Talents = { combat1?: Text; combat2?: Text; combat3?: Text } & Partial<
+  Record<`passive${number}`, Text>
+>;
+type CharacterProfile = Text & { title?: string };
 type Refinement = { description?: string; values?: string[] } | string[];
 type WeaponText = {
   id?: number;
@@ -60,6 +63,20 @@ function get<T>(category: string, name: string): Promise<T | undefined> {
   return pending.get(url) as Promise<T | undefined>;
 }
 
+export async function loadCharacterLore(
+  character: Pick<Character, "id" | "name">,
+) {
+  const name =
+    character.name === "Traveler"
+      ? character.id.startsWith("10000007")
+        ? "Lumine"
+        : "Aether"
+      : character.name;
+  const profile = await get<CharacterProfile>("characters", name);
+  if (!profile?.description?.trim()) return undefined;
+  return { title: profile.title, description: profile.description };
+}
+
 export async function loadDescriptions(character: Character) {
   const sourceName =
     character.name === "Traveler" && character.element
@@ -91,6 +108,12 @@ export async function loadDescriptions(character: Character) {
     );
   return {
     talents: [talent?.combat1, talent?.combat2, talent?.combat3],
+    passives: Object.entries<Text | undefined>(talent ?? {}).flatMap(
+      ([key, text]) =>
+        /^passive\d+$/.test(key) && text?.name
+          ? [{ name: text.name, description: text.description }]
+          : [],
+    ),
     constellations: Array.from(
       { length: 6 },
       (_, index) => constellation?.[`c${index + 1}`],

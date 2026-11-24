@@ -337,16 +337,60 @@ button.quiet,
 .character-caption h3 {
   font-size: 1rem;
 }
-.character-caption span {
+.character-level,
+.character-caption .source-badge {
   color: var(--muted);
   font-size: 0.85rem;
 }
+.character-level {
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+.character-level strong {
+  font-weight: 750;
+}
+.character-level [data-high-level] {
+  color: light-dark(#986415, #f3c976);
+}
 .gear-icons {
-  min-height: 2.4rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.4rem;
+  padding: 0 0.5rem 0.55rem;
+}
+.roster-weapon-group,
+.roster-artifact-group {
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+}
+.roster-artifact-group {
+  padding-inline-start: 0.3rem;
+  border-inline-start: 1px solid var(--surface-line);
+}
+.roster-gear-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+.roster-weapon {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--surface-line);
+  border-radius: 0.35rem;
+  background: var(--panel-deep);
+}
+.roster-weapon[data-rarity="1"] {
+  border-color: #7c858a;
+}
+.roster-artifact-icons {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem;
-  padding: 0 0.65rem 0.55rem;
+  justify-content: center;
+  gap: 0.13rem;
 }
 .element-badge {
   display: inline-flex;
@@ -532,17 +576,19 @@ button.quiet,
   min-width: 0;
 }
 .weapon-trigger {
-  position: relative;
-  isolation: isolate;
   width: 100%;
-  overflow: hidden;
   text-align: start;
 }
-.weapon-trigger[data-rarity="5"] {
+.weapon-rarity {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.weapon-rarity[data-rarity="5"] {
   border-color: #d8aa53;
   box-shadow: 0 0 0.85rem #e9b75c42;
 }
-.weapon-trigger[data-rarity="5"]::before {
+.weapon-rarity[data-rarity="5"]::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -550,23 +596,23 @@ button.quiet,
   background: radial-gradient(ellipse at center, #f4c8754d, transparent 72%);
   pointer-events: none;
 }
-.weapon-trigger[data-rarity="4"] {
+.weapon-rarity[data-rarity="4"] {
   border-color: #9b79c4;
   box-shadow:
     0 0 0.7rem #b68be640,
     inset 0 0 1rem #b68be621;
 }
-.weapon-trigger[data-rarity="3"] {
+.weapon-rarity[data-rarity="3"] {
   border-color: #628dae;
   box-shadow:
     0 0 0.55rem #79b7e825,
     inset 0 0 0.8rem #79b7e81a;
 }
-.weapon-trigger[data-rarity="2"] {
+.weapon-rarity[data-rarity="2"] {
   border-color: #6e9d75;
 }
 @media (prefers-reduced-motion: no-preference) {
-  :root[data-motion="on"] .weapon-trigger[data-rarity="5"]::before {
+  :root[data-motion="on"] .weapon-rarity[data-rarity="5"]::before {
     animation: weapon-gold-drift 3.8s ease-in-out infinite alternate;
   }
 }
@@ -611,6 +657,23 @@ button.quiet,
   border-color: var(--accent);
   background: var(--panel-deep);
   overflow-wrap: anywhere;
+}
+.weapon-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));
+  gap: 0.65rem;
+  margin: 0.5rem 0 0.8rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--surface-line);
+}
+.weapon-stats dt {
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+.weapon-stats dd {
+  margin: 0;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
 }
 @media (max-width: 50rem) {
   .weapon-disclosure {
@@ -714,6 +777,14 @@ details small {
   display: grid;
   gap: 0.65rem;
 }
+.passive-talents {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--surface-line);
+}
+.passive-talents summary > .action-icon {
+  color: var(--accent);
+}
 .artifact-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
 }
@@ -746,6 +817,20 @@ details summary {
   fill: currentColor;
   width: 1em;
   height: 1em;
+}
+.character-caption > .rarity-stars,
+.detail-identity > .rarity-stars {
+  display: flex;
+  width: fit-content;
+  margin-bottom: 0.3rem;
+  font-size: 0.8rem;
+}
+.character-caption > .rarity-stars {
+  margin-inline: auto;
+}
+.character-caption h3:has(+ .rarity-stars),
+.detail-identity h2:has(+ .rarity-stars) {
+  margin-bottom: 0.3rem;
 }
 .item-heading img,
 details img {
@@ -1339,7 +1424,7 @@ a:not(.brand):not(.character-link):not(.button) {
   margin-inline: auto;
   text-align: center;
 }
-.roster-home :is(.input-row, .gear-icons, .checkbox-label) {
+.roster-home :is(.input-row, .checkbox-label) {
   justify-content: center;
 }
 .roster-home .stack > button {
@@ -1811,6 +1896,23 @@ html:has(.roster-welcome[open]) {
   min-width: 0;
   margin-top: 0;
 }
+.drawer-portrait {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+}
+.drawer-lore h2 {
+  font-size: 1.45rem;
+  margin-bottom: 0.35rem;
+}
+.drawer-lore p {
+  margin: 0.3rem 0 0;
+  line-height: 1.42;
+}
+.drawer-lore-title {
+  color: var(--accent);
+  font-weight: 650;
+}
 .drawer-art {
   --rarity-glow: var(--accent);
   --art-scale: 1.52;
@@ -1874,9 +1976,13 @@ html:has(.roster-welcome[open]) {
   }
   .drawer-art {
     --art-scale: 1.72;
+    height: clamp(15rem, 62dvh, 36rem);
+  }
+}
+@media (min-width: 50rem) and (min-height: 46rem) {
+  .drawer-portrait {
     position: sticky;
     top: 4.5rem;
-    height: clamp(15rem, 68dvh, 37rem);
   }
 }
 @media (prefers-reduced-motion: no-preference) {

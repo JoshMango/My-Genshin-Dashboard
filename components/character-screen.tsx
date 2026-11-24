@@ -5,12 +5,14 @@ import { useEffect, useId, useState, type KeyboardEvent } from "react";
 import { artifactPieceFields, loadDescriptions } from "@/lib/enka/descriptions";
 import { slots, type Character } from "@/lib/model";
 import type { Team } from "@/lib/teams";
+import { ActionIcon } from "./action-icon";
 import { ArtifactSlot } from "./artifact-slot";
 import { ArtifactVerdict } from "./artifact-verdict";
 import { CharacterAppearance } from "./character-appearance";
 import { CombatStats } from "./combat-stats";
 import { useDashboard } from "./dashboard-state";
 import { ElementBadge, GameIcon } from "./game-icon";
+import { RarityStars } from "./rarity-stars";
 import { WeaponCard } from "./weapon-card";
 
 const tabs = [
@@ -96,6 +98,9 @@ export function CharacterDetails({
     <header className="detail-identity">
       <ElementBadge element={character.element} />
       {compact ? <h2>{character.name}</h2> : <h1>{character.name}</h1>}
+      {compact && (character.rarity === 4 || character.rarity === 5) && (
+        <RarityStars rarity={character.rarity} />
+      )}
       <p className="muted">
         Lv. {character.level} · Ascension {character.ascension} · C
         {character.constellation}
@@ -307,6 +312,30 @@ export function CharacterDetails({
                   Talent metadata is unavailable for this character.
                 </p>
               )}
+              <section className="passive-talents">
+                <h3>Passive talents</h3>
+                {details?.passives.length ? (
+                  <div className="detail-list">
+                    {details.passives.map((passive) => (
+                      <details className="gear-card" key={passive.name}>
+                        <summary>
+                          <ActionIcon name="star" />
+                          <strong>{passive.name}</strong>
+                        </summary>
+                        <p className="description">
+                          {passive.description ?? "Description unavailable."}
+                        </p>
+                      </details>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="muted">
+                    {details
+                      ? "Passive talent data is unavailable."
+                      : "Loading passive talents…"}
+                  </p>
+                )}
+              </section>
             </>
           )}
         </div>

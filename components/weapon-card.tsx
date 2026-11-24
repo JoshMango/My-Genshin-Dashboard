@@ -21,6 +21,8 @@ export function WeaponCard({
 }) {
   const panelId = useId();
   const [open, setOpen] = useState(false);
+  const baseAttack = weapon.stats.find((stat) => stat.key === "atk");
+  const mainStats = weapon.stats.filter((stat) => stat.key !== "atk");
   const summary = (
     <>
       <span className="equipment-art">
@@ -37,6 +39,18 @@ export function WeaponCard({
   );
   const details = (
     <>
+      <dl className="weapon-stats">
+        <div>
+          <dt>Base ATK</dt>
+          <dd>{baseAttack ? formatStat(baseAttack) : "—"}</dd>
+        </div>
+        {mainStats.map((stat) => (
+          <div key={stat.key}>
+            <dt>{statLabels[stat.key]}</dt>
+            <dd>{formatStat(stat)}</dd>
+          </div>
+        ))}
+      </dl>
       {passiveName && <strong>{passiveName}</strong>}
       {passive ? (
         <p className="description">{passive}</p>
@@ -46,16 +60,6 @@ export function WeaponCard({
             ? "Loading weapon passive…"
             : "No passive description available."}
         </p>
-      )}
-      {weapon.stats.length > 0 && (
-        <ul className="stat-list">
-          {weapon.stats.map((stat) => (
-            <li key={stat.key}>
-              <span>{statLabels[stat.key]}</span>
-              <strong>{formatStat(stat)}</strong>
-            </li>
-          ))}
-        </ul>
       )}
     </>
   );
@@ -69,7 +73,7 @@ export function WeaponCard({
     >
       <button
         type="button"
-        className="quiet weapon-trigger"
+        className="quiet weapon-trigger weapon-rarity"
         data-rarity={weapon.rarity}
         aria-expanded={open}
         aria-controls={panelId}

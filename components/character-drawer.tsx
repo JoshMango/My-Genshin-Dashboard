@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import { loadCharacterLore } from "@/lib/enka/descriptions";
 import type { Character } from "@/lib/model";
 import type { Team } from "@/lib/teams";
 import { CharacterDetails } from "./character-screen";
@@ -53,6 +54,9 @@ function Drawer({
   const dialog = useRef<HTMLDialogElement>(null);
   const [editing, edit] = useState(false);
   const [variant, setVariant] = useState(character);
+  const [lore, setLore] = useState<Awaited<
+    ReturnType<typeof loadCharacterLore>
+  > | null>(null);
   const { catalog, failure, retry } = useCatalog(editing);
   const { setWhatIf } = useDashboard();
   const router = useRouter();
@@ -60,6 +64,15 @@ function Drawer({
     const element = dialog.current;
     if (element && !element.open) element.showModal();
   }, []);
+  useEffect(() => {
+    let current = true;
+    void loadCharacterLore(character).then((bio) => {
+      if (current) setLore(bio);
+    });
+    return () => {
+      current = false;
+    };
+  }, [character]);
   return (
     <dialog
       className="character-drawer"
@@ -123,16 +136,28 @@ function Drawer({
           </section>
         )}
         <div className="drawer-layout">
-          <div className="drawer-art" data-rarity={character.rarity}>
-            <div className="splash-art-image">
-              <GameIcon
-                src={character.art}
-                fallbackSrc={character.icon}
-                alt={`${character.name} splash art`}
-                size={900}
-                eager
-              />
+          <div className="drawer-portrait">
+            <div className="drawer-art" data-rarity={character.rarity}>
+              <div className="splash-art-image">
+                <GameIcon
+                  src={character.art}
+                  fallbackSrc={character.icon}
+                  alt={`${character.name} splash art`}
+                  size={900}
+                  eager
+                />
+              </div>
             </div>
+            <section className="panel drawer-lore">
+              <h2>About {character.name}</h2>
+              {lore?.title && <p className="drawer-lore-title">{lore.title}</p>}
+              <p className="muted">
+                {lore?.description ??
+                  (lore === null
+                    ? "Loading biography…"
+                    : "Biography unavailable.")}
+              </p>
+            </section>
           </div>
           <CharacterDetails character={variant} team={team} compact />
         </div>
