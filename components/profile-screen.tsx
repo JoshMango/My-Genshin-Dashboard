@@ -131,7 +131,7 @@ export function ProfileScreen() {
           ✦
         </span>
         <h1 ref={rosterTitle} tabIndex={-1}>
-          Character roster
+          Character Roster
         </h1>
         {profile ? (
           <div className="player-card">

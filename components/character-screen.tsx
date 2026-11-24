@@ -117,7 +117,7 @@ export function CharacterDetails({
     <>
       {!compact && (
         <Link className="back-link" href="/">
-          Character roster
+          Character Roster
         </Link>
       )}
       <section

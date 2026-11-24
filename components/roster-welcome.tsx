@@ -35,7 +35,7 @@ export function RosterWelcome({
       <span className="roster-emblem" aria-hidden="true">
         ✦
       </span>
-      <h2 id="roster-welcome-title">Welcome to Genshin Dashboard</h2>
+      <h2 id="roster-welcome-title">Welcome to Genshin Roster</h2>
       <p id="roster-welcome-purpose">
         To get personalized team recommendations, discover new synergies, and
         explore team compositions using your complete roster.
