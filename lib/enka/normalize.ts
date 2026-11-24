@@ -124,7 +124,10 @@ export function normalizeWeapon(
     refinement: (Object.values(entry.weapon?.affixMap ?? {})[0] ?? 0) + 1,
     stats: (entry.flat?.weaponStats ?? []).flatMap(
       (stat) =>
-        equipmentStat(stat.mainPropId, stat.statValue ?? stat.propValue) ?? [],
+        equipmentStat(
+          stat.appendPropId ?? stat.appendPropID ?? stat.mainPropId,
+          stat.statValue ?? stat.propValue,
+        ) ?? [],
     ),
   };
 }

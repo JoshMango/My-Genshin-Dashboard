@@ -28,7 +28,26 @@ const data: Record<string, unknown> = {
     ...avatar(10000025, "Water", 7, "Xingqiu"),
     ...avatar(10000065, "Electric", 8, "Shinobu", "QUALITY_PURPLE"),
   },
-  "weapons.json": {},
+  "weapons.json": {
+    11513: {
+      Rarity: 5,
+      WeaponType: 1,
+      Icon: "UI_EquipIcon_Sword_Regalis",
+      NameTextMapHash: 12,
+      BaseProps: { 4: 44.3358, 22: 0.192 },
+      PropGrowCurves: { 4: 1304, 22: 2301 },
+      BasePromote: [0, 31.1, 62.2, 93.4, 124.5, 155.6, 186.7],
+    },
+    11101: {
+      Rarity: 1,
+      WeaponType: 1,
+      Icon: "UI_EquipIcon_Sword_Blunt",
+      NameTextMapHash: 13,
+      BaseProps: { 4: 23.245 },
+      PropGrowCurves: {},
+      BasePromote: [0],
+    },
+  },
   "relics.json": {
     Items: {
       1: {
@@ -58,7 +77,10 @@ const data: Record<string, unknown> = {
   "namecards.json": { 210166: { Icon: "/ui/UI_NameCardPic_Linette_P.jpg" } },
   "pfps.json": { 4500: { IconPath: "/ui/UI_AvatarIcon_Shenhe_Circle.png" } },
   "affixes.json": {},
-  "curves.json": {},
+  "curves.json": {
+    1304: Array(90).fill(8.01),
+    2301: Array(90).fill(4.594),
+  },
   "relic_levels.json": {},
   "characters/kamisatoayaka.json": {
     title: "Frostflake Heron",
@@ -135,8 +157,11 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
                   rankLevel: 5,
                   icon: "UI_EquipIcon_Sword_Narukami",
                   weaponStats: [
-                    { mainPropId: "FIGHT_PROP_BASE_ATTACK", statValue: 674 },
-                    { mainPropId: "FIGHT_PROP_CRITICAL_HURT", statValue: 44.1 },
+                    { appendPropId: "FIGHT_PROP_BASE_ATTACK", statValue: 674 },
+                    {
+                      appendPropId: "FIGHT_PROP_CRITICAL_HURT",
+                      statValue: 44.1,
+                    },
                   ],
                 },
               },
@@ -388,6 +413,90 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
       .first(),
   ).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test("recovers missing weapon stats on saved showcase builds without a UID refresh", async ({
+  page,
+}) => {
+  await stubCatalog(page);
+  await page.addInitScript(() => {
+    const saved = {
+      source: "showcase",
+      rarity: 5,
+      level: 90,
+      ascension: 6,
+      constellation: 0,
+      talents: [],
+      constellations: [],
+      stats: {},
+      base: {},
+      artifacts: [],
+    };
+    localStorage.setItem(
+      "genshin.roster.v1",
+      JSON.stringify({
+        manual: [],
+        imported: [],
+        profile: {
+          uid: "618285856",
+          characters: [
+            {
+              ...saved,
+              id: "10000089",
+              name: "Furina",
+              weapon: {
+                id: "11513",
+                name: "Splendor of Tranquil Waters",
+                rarity: 5,
+                level: 90,
+                ascension: 6,
+                refinement: 1,
+                stats: [],
+              },
+            },
+            {
+              ...saved,
+              id: "10000002",
+              name: "Kamisato Ayaka",
+              weapon: {
+                id: "11101",
+                name: "Dull Blade",
+                rarity: 1,
+                level: 1,
+                ascension: 0,
+                refinement: 1,
+                stats: [],
+              },
+            },
+          ],
+        },
+      }),
+    );
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Got it" }).click();
+
+  for (const [character, weapon, labels, values] of [
+    [
+      "Furina",
+      "Splendor of Tranquil Waters",
+      ["Base ATK", "CRIT DMG"],
+      ["542", "88.2%"],
+    ],
+    ["Kamisato Ayaka", "Dull Blade", ["Base ATK"], ["23"]],
+  ] as const) {
+    await page.getByRole("button", { name: new RegExp(character) }).click();
+    const trigger = page.getByRole("button", { name: new RegExp(weapon) });
+    if (await page.evaluate(() => matchMedia("(hover: hover)").matches)) {
+      await trigger.hover();
+    } else {
+      await trigger.tap();
+    }
+    const stats = page.locator(".weapon-passive .weapon-stats");
+    await expect(stats.locator("dt")).toHaveText([...labels]);
+    await expect(stats.locator("dd")).toHaveText([...values]);
+    await page.getByRole("button", { name: "Close details" }).click();
+  }
 });
 
 test("handles empty and rate-limited showcases, and persists accessible themes", async ({

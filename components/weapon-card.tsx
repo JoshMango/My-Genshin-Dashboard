@@ -1,6 +1,8 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { catalogWeapon } from "@/lib/builds";
+import { loadCatalog } from "@/lib/enka/catalog";
 import { formatStat, statLabels, type Weapon } from "@/lib/model";
 import { ActionIcon } from "./action-icon";
 import { GameIcon } from "./game-icon";
@@ -21,8 +23,49 @@ export function WeaponCard({
 }) {
   const panelId = useId();
   const [open, setOpen] = useState(false);
-  const baseAttack = weapon.stats.find((stat) => stat.key === "atk");
-  const mainStats = weapon.stats.filter((stat) => stat.key !== "atk");
+  const [recovered, setRecovered] = useState<{
+    weapon: Weapon;
+    stats: Weapon["stats"];
+  }>();
+  useEffect(() => {
+    const hasBaseAttack = weapon.stats.some((stat) => stat.key === "atk");
+    const hasMainStat = weapon.stats.some((stat) => stat.key !== "atk");
+    if (hasBaseAttack && (weapon.rarity < 3 || hasMainStat)) return;
+
+    let cancelled = false;
+    void loadCatalog()
+      .then((catalog) => {
+        if (cancelled) return;
+        const catalogStats = catalogWeapon(
+          weapon.id,
+          weapon.level,
+          weapon.ascension,
+          weapon.refinement,
+          catalog,
+        )?.stats;
+        if (catalogStats) {
+          setRecovered({
+            weapon,
+            stats: [
+              ...weapon.stats,
+              ...catalogStats.filter(
+                (stat) => !weapon.stats.some((saved) => saved.key === stat.key),
+              ),
+            ],
+          });
+        }
+      })
+      .catch(() => {
+        // Keep the saved stats and passive available if the catalog is offline.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [weapon]);
+
+  const stats = recovered?.weapon === weapon ? recovered.stats : weapon.stats;
+  const baseAttack = stats.find((stat) => stat.key === "atk");
+  const mainStats = stats.filter((stat) => stat.key !== "atk");
   const summary = (
     <>
       <span className="equipment-art">

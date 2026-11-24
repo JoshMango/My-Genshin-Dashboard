@@ -156,6 +156,7 @@ it("imports current showcase artifacts and legacy stat values with their origina
           flat: {
             weaponStats: [
               { mainPropId: "FIGHT_PROP_BASE_ATTACK", statValue: 741 },
+              { appendPropID: "FIGHT_PROP_CRITICAL", propValue: 11 },
             ],
           },
         },
@@ -179,5 +180,8 @@ it("imports current showcase artifacts and legacy stat values with their origina
       ],
     }),
   ]);
-  expect(character.weapon?.stats).toEqual([{ key: "atk", value: 741 }]);
+  expect(character.weapon?.stats).toEqual([
+    { key: "atk", value: 741 },
+    { key: "critRate_", value: 11 },
+  ]);
 });
