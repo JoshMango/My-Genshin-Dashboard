@@ -676,6 +676,13 @@ button.quiet,
   font-weight: 750;
   font-variant-numeric: tabular-nums;
 }
+.weapon-passive .weapon-stats dt {
+  font-size: 1.05rem;
+}
+.weapon-passive .weapon-stats dd {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
 @media (max-width: 50rem) {
   .weapon-disclosure {
     margin-inline-start: auto;
