@@ -35,13 +35,14 @@ export function RosterWelcome({
       <span className="roster-emblem" aria-hidden="true">
         ✦
       </span>
-      <h2 id="roster-welcome-title">Welcome to My Genshin Dashboard</h2>
+      <h2 id="roster-welcome-title">Welcome to Genshin Dashboard</h2>
       <p id="roster-welcome-purpose">
-        Discover recommended teams for the characters and gear you already own.
+        To get personalized team recommendations, discover new synergies, 
+        and explore team compositions using your complete roster.
       </p>
       <p id="roster-welcome-import" className="muted">
-        Upload a GOOD file to add your Genshin inventory, including characters
-        outside your public showcase.
+        Upload a 'GOOD' file to add your entire character inventory, 
+        including characters outside your public showcase.
       </p>
       <div className="input-row">
         <button
