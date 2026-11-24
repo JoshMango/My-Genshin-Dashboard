@@ -3,6 +3,7 @@ const revision = "2a63e0971795bd0d4f8753e61d266b1ab565a417";
 const root = `https://raw.githubusercontent.com/EnkaNetwork/API-docs/${revision}/store/gi`;
 
 type Props = Record<string, number>;
+export type ProfilePictures = Record<string, { IconPath: string }>;
 type AvatarMetadata = {
   Element?: string;
   Consts?: string[];
@@ -60,6 +61,15 @@ async function read<T>(file: string): Promise<T> {
   return response.json();
 }
 let catalog: Promise<Catalog> | undefined;
+let profilePictures: Promise<ProfilePictures> | undefined;
+
+export function loadProfilePictures() {
+  profilePictures ??= read<ProfilePictures>("pfps").catch(() => {
+    profilePictures = undefined;
+    return {};
+  });
+  return profilePictures;
+}
 
 export function loadCatalog(locale = "en") {
   catalog ??= Promise.all([

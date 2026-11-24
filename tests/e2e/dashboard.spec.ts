@@ -55,7 +55,8 @@ const data: Record<string, unknown> = {
       "11": "Mistsplitter Reforged",
     },
   },
-  "namecards.json": {},
+  "namecards.json": { 210166: { Icon: "/ui/UI_NameCardPic_Linette_P.jpg" } },
+  "pfps.json": { 4500: { IconPath: "/ui/UI_AvatarIcon_Shenhe_Circle.png" } },
   "affixes.json": {},
   "curves.json": {},
   "relic_levels.json": {},
@@ -112,6 +113,8 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
           nickname: "Traveler Example",
           level: 60,
           signature: "See you in Teyvat.",
+          namecardId: 210166,
+          profilePicture: { id: 4500 },
         },
         avatarInfoList: [
           {
@@ -189,6 +192,19 @@ test("imports a showcase, navigates character tabs, saves a team, and calculates
   await page.getByLabel("Genshin UID").fill("618285856");
   await page.getByRole("button", { name: "Search Account" }).click();
   await expect(page.getByText("Traveler Example")).toBeVisible();
+  const namecard = page.locator(".hero-namecard");
+  await expect(namecard).toBeVisible();
+  await expect(namecard).toHaveAttribute(
+    "src",
+    "https://enka.network/ui/UI_NameCardPic_Linette_P.jpg",
+  );
+  await expect(namecard).toHaveCSS("mask-image", /^linear-gradient/);
+  await expect(
+    page.getByRole("img", { name: "Account profile avatar" }),
+  ).toHaveAttribute(
+    "src",
+    "https://enka.network/ui/UI_AvatarIcon_Shenhe_Circle.png",
+  );
   await expect(page.getByText("Bio: See you in Teyvat.")).toBeVisible();
   await expect(
     links.getByRole("link", { name: "Leaderboards on Akasha.cv" }),

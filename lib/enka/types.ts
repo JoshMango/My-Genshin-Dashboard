@@ -45,6 +45,7 @@ export type EnkaResponse = {
     signature?: string;
     nameCardId?: number;
     namecardId?: number;
+    profilePicture?: { id?: number; avatarId?: number; costumeId?: number };
   };
   avatarInfoList?: EnkaAvatar[];
 };

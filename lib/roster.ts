@@ -20,6 +20,7 @@ function isProfile(value: unknown): value is Profile {
     (value.nickname === undefined || typeof value.nickname === "string") &&
     (value.signature === undefined || typeof value.signature === "string") &&
     (value.namecard === undefined || typeof value.namecard === "string") &&
+    (value.avatar === undefined || typeof value.avatar === "string") &&
     (value.rank === undefined ||
       (typeof value.rank === "number" && Number.isFinite(value.rank))) &&
     isList(value.characters) &&

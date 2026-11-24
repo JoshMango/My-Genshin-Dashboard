@@ -95,6 +95,7 @@ export type Profile = {
   rank?: number;
   signature?: string;
   namecard?: string;
+  avatar?: string;
   characters: Character[];
 };
 

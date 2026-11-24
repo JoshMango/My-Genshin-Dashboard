@@ -88,6 +88,36 @@ it("preserves available builds when player profile fields are placeholders", () 
   expect(result.characters[0].talents[1]).toMatchObject({ level: 8, bonus: 3 });
 });
 
+it("resolves the equipped namecard and current or legacy profile avatar independently", () => {
+  const catalog: Catalog = {
+    avatars: { 10000002: { SideIconName: "UI_AvatarIcon_Side_Ayaka" } },
+    namecards: { 210166: { Icon: "/ui/UI_NameCardPic_Linette_P.jpg" } },
+    loc: {},
+    weapons: {},
+    relics: { Items: {}, Sets: {} },
+    affixes: {},
+    curves: {},
+    relicLevels: {},
+  };
+  const playerInfo = {
+    namecardId: 210166,
+    profilePicture: { avatarId: 10000002 },
+  };
+  const modern = normalizeProfile(
+    "612345678",
+    { playerInfo: { ...playerInfo, profilePicture: { id: 4500 } } },
+    catalog,
+    { 4500: { IconPath: "/ui/UI_AvatarIcon_Shenhe_Circle.png" } },
+  );
+  expect(modern).toMatchObject({
+    namecard: "https://enka.network/ui/UI_NameCardPic_Linette_P.jpg",
+    avatar: "https://enka.network/ui/UI_AvatarIcon_Shenhe_Circle.png",
+  });
+  expect(normalizeProfile("612345678", { playerInfo }, catalog).avatar).toBe(
+    "https://enka.network/ui/UI_AvatarIcon_Ayaka.png",
+  );
+});
+
 it("imports current showcase artifacts and legacy stat values with their original units", () => {
   const catalog: Catalog = {
     avatars: {},

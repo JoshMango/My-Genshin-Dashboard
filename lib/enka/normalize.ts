@@ -10,7 +10,7 @@ import type {
   Stats,
   Weapon,
 } from "@/lib/model";
-import { asset, type Catalog } from "./catalog";
+import { asset, type Catalog, type ProfilePictures } from "./catalog";
 import type { EnkaAvatar, EnkaEquipment, EnkaResponse } from "./types";
 
 const elements: Record<string, Element> = {
@@ -268,8 +268,13 @@ export function normalizeProfile(
   uid: string,
   data: EnkaResponse,
   catalog: Catalog,
+  profilePictures?: ProfilePictures,
 ): Profile {
   const player = data.profileUnavailable ? undefined : data.playerInfo;
+  const picture = player?.profilePicture;
+  const legacyAvatar = picture?.avatarId
+    ? avatarMeta(String(picture.avatarId), catalog)
+    : undefined;
   return {
     uid,
     nickname: player?.nickname,
@@ -278,6 +283,12 @@ export function normalizeProfile(
     namecard: asset(
       catalog.namecards[player?.nameCardId ?? player?.namecardId ?? 0]?.Icon,
     ),
+    avatar:
+      asset(profilePictures?.[picture?.id ?? 0]?.IconPath) ??
+      asset(legacyAvatar?.Costumes?.[picture?.costumeId ?? 0]?.Icon) ??
+      (picture?.avatarId
+        ? characterMetadata(String(picture.avatarId), catalog).icon
+        : undefined),
     characters: (data.avatarInfoList ?? []).map((avatar) =>
       normalizeCharacter(avatar, catalog),
     ),

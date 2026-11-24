@@ -250,11 +250,12 @@ button.quiet,
   gap: 1rem;
   margin-bottom: 1rem;
 }
-.player-card img {
-  width: 5.25rem;
+.player-card .profile-avatar {
+  width: clamp(4rem, 8vw, 5.25rem);
+  height: auto;
   aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 0.75rem;
+  object-fit: contain;
+  border-radius: 50%;
 }
 .player-card p,
 .empty-roster p {
@@ -1318,18 +1319,19 @@ progress {
 .damage-share .section-heading {
   margin-bottom: 0.2rem;
 }
-.hero-character {
+.hero-namecard {
   position: absolute;
   z-index: -1;
-  bottom: -12%;
-  right: -15%;
-  width: min(67%, 57rem);
-  height: auto;
+  inset: 0 0 0 auto;
+  width: min(64%, 58rem);
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
   pointer-events: none;
-  opacity: 0.56;
-  mask-image: radial-gradient(ellipse at 52% 50%, #000 23%, transparent 72%);
+  opacity: 0.55;
+  mask-image: linear-gradient(90deg, transparent, #000 82%);
 }
-.hero-character.icon-placeholder {
+.hero-namecard.icon-placeholder {
   display: none;
 }
 .prose-panel {
@@ -1366,8 +1368,9 @@ a:not(.brand):not(.character-link):not(.button) {
   text-underline-offset: 0.18em;
 }
 @media (max-width: 64rem) {
-  .hero-character {
-    display: none;
+  .hero-namecard {
+    width: 78%;
+    opacity: 0.36;
   }
 }
 @media (max-width: 39rem) {

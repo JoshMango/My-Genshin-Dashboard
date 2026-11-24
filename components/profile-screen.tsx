@@ -2,7 +2,7 @@
 
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { saveJson } from "@/lib/browser-state";
-import { loadCatalog } from "@/lib/enka/catalog";
+import { loadCatalog, loadProfilePictures } from "@/lib/enka/catalog";
 import { normalizeProfile } from "@/lib/enka/normalize";
 import type { EnkaResponse } from "@/lib/enka/types";
 import { elements } from "@/lib/model";
@@ -35,7 +35,6 @@ export function ProfileScreen() {
   const [source, setSource] = useState("");
   const [needsBuild, setNeedsBuild] = useState(false);
   const [backupNotice, setBackupNotice] = useState("");
-  const leadArtwork = profile?.characters.find((character) => character.art);
   const visible = characters.filter(
     (character) =>
       (!element || character.element === element) &&
@@ -72,7 +71,15 @@ export function ProfileScreen() {
         throw new Error(
           data.message ?? "Showcase lookup failed. Try again shortly.",
         );
-      if (!setProfile(normalizeProfile(value, data, await loadCatalog()))) {
+      const [catalog, profilePictures] = await Promise.all([
+        loadCatalog(),
+        !data.profileUnavailable && data.playerInfo?.profilePicture?.id
+          ? loadProfilePictures()
+          : undefined,
+      ]);
+      if (
+        !setProfile(normalizeProfile(value, data, catalog, profilePictures))
+      ) {
         throw new Error(
           "Browser storage is unavailable or full. Your previous roster is still available.",
         );
@@ -118,15 +125,16 @@ export function ProfileScreen() {
   return (
     <div className="roster-home">
       <section className="hero panel profile-hero">
-        <div className="hero-orbit" aria-hidden="true" />
-        {leadArtwork && (
+        {profile?.namecard && (
           <GameIcon
-            src={leadArtwork.art}
+            src={profile.namecard}
             alt=""
             size={800}
-            className="hero-character"
+            className="hero-namecard"
+            eager
           />
         )}
+        <div className="hero-orbit" aria-hidden="true" />
         <span className="roster-emblem" aria-hidden="true">
           ✦
         </span>
@@ -135,8 +143,13 @@ export function ProfileScreen() {
         </h1>
         {profile ? (
           <div className="player-card">
-            {profile.namecard && (
-              <GameIcon src={profile.namecard} alt="" size={84} />
+            {profile.avatar && (
+              <GameIcon
+                src={profile.avatar}
+                alt="Account profile avatar"
+                size={84}
+                className="profile-avatar"
+              />
             )}
             <div>
               <h2>{profile.nickname || `UID ${profile.uid}`}</h2>
